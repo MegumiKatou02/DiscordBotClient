@@ -9,6 +9,8 @@ async def send_help_message(interaction: discord.Interaction):
     **/server**
     **/help**
     **/avatar /avt**
+    **/choose**
+    **/find_member**
     """
     embed = discord.Embed(
         title="Commands bot Khu Wibu",
