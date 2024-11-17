@@ -87,11 +87,15 @@ async def avatar(ctx, member: discord.Member = None):
 
     embed = discord.Embed(
         title=f"Avatar của {member.display_name}",
-        description="Dưới đây là ảnh avatar của bạn!",
+        description="",
         color=discord.Color.blue()
     )
     embed.set_image(url=avatar_url)
 
     await ctx.send(embed=embed)
     
+@clients.command(name='avt')
+async def avt(ctx, member: discord.Member = None):
+    await avatar(ctx, member)
+
 clients.run(config.TOKEN)

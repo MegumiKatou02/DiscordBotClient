@@ -10,6 +10,7 @@ async def send_help_message(ctx):
     **roll**
     **server_info**
     **helpkwb**
+    **avatar (hoặc avt)**
     """
     embed = discord.Embed(
         title="Commands bot Khu Wibu",
