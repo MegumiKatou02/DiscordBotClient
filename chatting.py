@@ -7,4 +7,7 @@ async def on_message(message, bot):
     if any(re.fullmatch(r'\b' + greeting + r'\b', message.content.lower()) for greeting in greetings) and not message.author.bot:
         await message.channel.send(f"Chào bạn, {message.author.name} :3")
 
+    if not message.author.bot and message.content.lower().startswith('chinh bel bel nga sap duong'):
+        await message.channel.send('Co m nga ay')
+
     await bot.process_commands(message)
