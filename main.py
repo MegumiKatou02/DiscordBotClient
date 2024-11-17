@@ -40,20 +40,14 @@ async def member_join(member):
         print("Channel not found or invalid channel ID.")
 
 @clients.command()
-async def list_members(ctx):
-    guild = ctx.guild
-    members = '\n'.join([member.name for member in guild.members])
-    await ctx.send(f"Members:\n{members}")
-
-@clients.command()
 async def say(ctx, *, message: str):
     await ctx.message.delete()
     
     await ctx.send(message)
 
-@clients.command(name = 'roll')
-async def roll_command(ctx, min_value: int = 0, max_value: int = 1000):
-    await game.roll(ctx, min_value, max_value)
+@clients.tree.command(name = 'roll', description="Random số")
+async def roll_command(interaction: discord.Interaction, min_value: int = 0, max_value: int = 1000):
+    await game.roll(interaction, min_value, max_value)
 
 @clients.event
 async def on_message(message):
@@ -81,9 +75,9 @@ async def server(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
-@clients.command()
-async def helpkwb(ctx):
-    await help_list.send_help_message(ctx)
+@clients.tree.command(description="Help / Show commands")
+async def help(interaction: discord.Interaction):
+    await help_list.send_help_message(interaction)
 
 @clients.tree.command(description="Hiển thị avatar của một thành viên")
 async def avatar(interaction: discord.Interaction, member: discord.Member = None):
