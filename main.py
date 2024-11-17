@@ -26,10 +26,12 @@ async def on_ready():
 
     print("----------")
 
+#goodbye
 @clients.command()
-async def goodbye(ctx):
-    await ctx.send("Cook gium cai <(\")")
+async def goodbye(interaction: discord.Interaction):
+    await interaction.response.send_message("Cook gium cai <(\")")
 
+#member join
 @clients.event
 async def member_join(member):
     channel = clients.get_channel(1210656611270533222)
@@ -39,21 +41,24 @@ async def member_join(member):
     else:
         print("Channel not found or invalid channel ID.")
 
-@clients.command()
-async def say(ctx, *, message: str):
-    await ctx.message.delete()
-    
-    await ctx.send(message)
+#say
+@clients.tree.command(description="Nói thông qua bot")
+async def say(interaction: discord.Interaction, *, message: str):
+    await interaction.response.send_message("Đang xử lý...", ephemeral=True)
+    await interaction.channel.purge(limit=1, check=lambda msg: msg.author == interaction.user)
+    await interaction.channel.send(message)
 
+#roll
 @clients.tree.command(name = 'roll', description="Random số")
 async def roll_command(interaction: discord.Interaction, min_value: int = 0, max_value: int = 1000):
     await game.roll(interaction, min_value, max_value)
 
+#check prefix
 @clients.event
 async def on_message(message):
     await chatting.on_message(message, clients) 
 
-
+#server
 @clients.tree.command(description = "Hiển thị thông tin máy chủ") #
 async def server(interaction: discord.Interaction):
     guild = interaction.guild
@@ -75,10 +80,12 @@ async def server(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
+#help
 @clients.tree.command(description="Help / Show commands")
 async def help(interaction: discord.Interaction):
     await help_list.send_help_message(interaction)
 
+#avatar
 @clients.tree.command(description="Hiển thị avatar của một thành viên")
 async def avatar(interaction: discord.Interaction, member: discord.Member = None):
     if not member:
@@ -94,7 +101,8 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
     embed.set_image(url=avatar_url)
 
     await interaction.response.send_message(embed=embed)
-    
+
+#avt
 @clients.tree.command(description="Hiển thị avatar của một thành viên")
 async def avt(interaction: discord.Interaction, member: discord.Member = None):
     if not member:
@@ -111,10 +119,12 @@ async def avt(interaction: discord.Interaction, member: discord.Member = None):
 
     await interaction.response.send_message(embed=embed)
 
+#run
 @clients.command()
 async def run(ctx):
     await ctx.send("Khu Wibu bot discord is running")
 
+#choose
 @clients.tree.command(name="choose", description = "Random 1 trong nhiều lựa chọn")
 async def choose(interaction: discord.Interaction, choice1: str, choice2: str, choice3: str = None, 
                  choice4: str = None, choice5: str = None, choice6: str = None, choice7: str = None,
@@ -124,11 +134,35 @@ async def choose(interaction: discord.Interaction, choice1: str, choice2: str, c
     choice_list = [choice.strip() for choice in choice_list if choice]
     
     if not choice_list:
-        await interaction.response.send_message("Please provide some options to choose from!")
+        await interaction.response.send_message("Please provide some options to choose from!", ephemeral=True)
         return
     
     chosen_option = random.choice(choice_list)
     
     await interaction.response.send_message(f"I choose: {chosen_option}")
+
+#find member
+@clients.tree.command(name= "find_member", description="Tạo ra chủ đề và tìm người chiến thắng")
+async def find_member(interaction: discord.Interaction, topic: str,
+                      member1: discord.Member,
+                      member2: discord.Member = None, 
+                      member3: discord.Member = None,
+                      member4: discord.Member = None,
+                      member5: discord.Member = None,
+                      member6: discord.Member = None,
+                      member7: discord.Member = None,
+                      member8: discord.Member = None,
+                      member9: discord.Member = None,
+                      member10: discord.Member = None):
+    members = [member for member in [member1, member2, member3, member4, member5,
+                                     member6, member7, member8, member9, member10] if member]
+
+    if not members:
+        await interaction.response.send_message("Please provide some options to choose from!", ephemeral=True)
+        return
+    
+    chosen_member = random.choice(members)
+
+    await interaction.response.send_message(f'**{topic}**: {chosen_member.mention}')
 
 clients.run(config.TOKEN)
