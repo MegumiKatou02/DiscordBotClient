@@ -220,6 +220,7 @@ async def recent_members(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
+#weather
 @clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
 async def weather(interaction: discord.Interaction, city_name: str):
     await Weather.weather_command(interaction, city_name)
