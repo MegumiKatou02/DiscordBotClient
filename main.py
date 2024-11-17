@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 import config
-import music
+import game
 
 intents = discord.Intents.default()  
 intents.message_content = True 
@@ -44,29 +44,8 @@ async def say(ctx, *, message: str):
     
     await ctx.send(message)
 
-@clients.command()
-async def join(ctx):
-    await music.join(ctx)
-
-@clients.command()
-async def leave(ctx):
-    await music.leave(ctx)
-
-@clients.command()
-async def play(ctx, url):
-    await music.play_music(ctx, url)
-
-@clients.command()
-async def pause(ctx):
-    await music.pause(ctx)
-
-@clients.command()
-async def resume(ctx):
-    await music.resume(ctx)
-
-@clients.command()
-async def stop(ctx):
-    await music.stop(ctx)
-
+@clients.command(name = 'roll')
+async def roll_command(ctx, min_value: int = 0, max_value: int = 1000):
+    await game.roll(ctx, min_value, max_value)
 
 clients.run(config.TOKEN)
