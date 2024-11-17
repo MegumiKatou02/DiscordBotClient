@@ -119,10 +119,12 @@ async def run(ctx):
     await ctx.send("Khu Wibu bot discord is running")
 
 @clients.tree.command(name="choose")
-async def choose(interaction: discord.Interaction, choices: str):
-    choice_list = choices.split('|')
+async def choose(interaction: discord.Interaction, choice1: str, choice2: str, choice3: str = None, 
+                 choice4: str = None, choice5: str = None, choice6: str = None, choice7: str = None,
+                 choice8: str = None, choice9: str = None, choice10: str = None):
+    choice_list = [choice1, choice2, choice3, choice4, choice5, choice6, choice7, choice8, choice9, choice10]
     
-    choice_list = [choice.strip() for choice in choice_list]
+    choice_list = [choice.strip() for choice in choice_list if choice]
     
     if not choice_list:
         await interaction.response.send_message("Please provide some options to choose from!")
