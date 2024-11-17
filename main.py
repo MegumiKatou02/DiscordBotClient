@@ -1,3 +1,4 @@
+import random
 import discord
 from discord.ext import commands
 from tabulate import tabulate
@@ -101,5 +102,19 @@ async def avt(ctx, member: discord.Member = None):
 @clients.command()
 async def run(ctx):
     await ctx.send("Khu Wibu bot discord is running")
+
+@clients.command()
+async def choose(ctx, *, choices: str):
+    choice_list = choices.split('|')
+    
+    choice_list = [choice.strip() for choice in choice_list]
+    
+    if not choice_list:
+        await ctx.send("Please provide some options to choose from!")
+        return
+    
+    chosen_option = random.choice(choice_list)
+    
+    await ctx.send(f"I choose: {chosen_option}")
 
 clients.run(config.TOKEN)
