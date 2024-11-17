@@ -98,4 +98,8 @@ async def avatar(ctx, member: discord.Member = None):
 async def avt(ctx, member: discord.Member = None):
     await avatar(ctx, member)
 
+@clients.command()
+async def run(ctx):
+    await ctx.send("Khu Wibu bot discord is running")
+
 clients.run(config.TOKEN)
