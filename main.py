@@ -2,6 +2,7 @@ import random
 import discord
 from discord.ext import commands
 from tabulate import tabulate
+from discord.ui import Select, View
 
 import chatting
 import config
@@ -20,6 +21,8 @@ async def on_ready():
     print("----------")
     game = discord.Game("Khu Wibu")
     await clients.change_presence(activity=game)
+
+    await clients.tree.sync() 
 
     print("----------")
 
@@ -79,12 +82,12 @@ async def server_info(ctx):
 async def helpkwb(ctx):
     await help_list.send_help_message(ctx)
 
-@clients.command()
-async def avatar(ctx, member: discord.Member = None):
+@clients.tree.command(description="Hiển thị avatar của một thành viên")
+async def avatar(interaction: discord.Interaction, member: discord.Member = None):
     if not member:
-        member = ctx.author
+        member = interaction.user  
     
-    avatar_url = member.avatar.url
+    avatar_url = member.display_avatar.url 
 
     embed = discord.Embed(
         title=f"Avatar của {member.display_name}",
@@ -93,28 +96,40 @@ async def avatar(ctx, member: discord.Member = None):
     )
     embed.set_image(url=avatar_url)
 
-    await ctx.send(embed=embed)
+    await interaction.response.send_message(embed=embed)
     
-@clients.command(name='avt')
-async def avt(ctx, member: discord.Member = None):
-    await avatar(ctx, member)
+@clients.tree.command(description="Hiển thị avatar của một thành viên")
+async def avt(interaction: discord.Interaction, member: discord.Member = None):
+    if not member:
+        member = interaction.user  
+    
+    avatar_url = member.display_avatar.url 
+
+    embed = discord.Embed(
+        title=f"Avatar của {member.display_name}",
+        description="",
+        color=discord.Color.blue()
+    )
+    embed.set_image(url=avatar_url)
+
+    await interaction.response.send_message(embed=embed)
 
 @clients.command()
 async def run(ctx):
     await ctx.send("Khu Wibu bot discord is running")
 
-@clients.command()
-async def choose(ctx, *, choices: str):
+@clients.tree.command(name="choose")
+async def choose(interaction: discord.Interaction, choices: str):
     choice_list = choices.split('|')
     
     choice_list = [choice.strip() for choice in choice_list]
     
     if not choice_list:
-        await ctx.send("Please provide some options to choose from!")
+        await interaction.response.send_message("Please provide some options to choose from!")
         return
     
     chosen_option = random.choice(choice_list)
     
-    await ctx.send(f"I choose: {chosen_option}")
+    await interaction.response.send_message(f"I choose: {chosen_option}")
 
 clients.run(config.TOKEN)
