@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+import chatting
 import config
 import game
 
@@ -47,5 +48,11 @@ async def say(ctx, *, message: str):
 @clients.command(name = 'roll')
 async def roll_command(ctx, min_value: int = 0, max_value: int = 1000):
     await game.roll(ctx, min_value, max_value)
+
+@clients.event
+async def on_message(message):
+    await chatting.on_message(message, clients) 
+
+    # await clients.process_commands(message)
 
 clients.run(config.TOKEN)
