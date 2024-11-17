@@ -11,7 +11,7 @@ import chatting
 import config
 import game
 import help_list
-import weather
+import Weather
 
 intents = discord.Intents.default()  
 intents.message_content = True 
@@ -221,7 +221,7 @@ async def recent_members(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed)
 
 @clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
-async def weather_show(interaction: discord.Interaction, city_name: str):
-    await weather.weather_command(interaction, city_name)
+async def weather(interaction: discord.Interaction, city_name: str):
+    await Weather.weather_command(interaction, city_name)
 
 clients.run(config.TOKEN)
