@@ -23,10 +23,6 @@ async def on_ready():
     print("----------")
 
 @clients.command()
-async def hello(ctx):
-    await ctx.send("Hello, I am bot")
-
-@clients.command()
 async def goodbye(ctx):
     await ctx.send("Cook gium cai <(\")")
 
