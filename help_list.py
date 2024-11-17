@@ -18,5 +18,7 @@ async def send_help_message(ctx):
         color=discord.Color.blue() 
     )
     
+    embed.set_thumbnail(url=ctx.bot.user.avatar.url)
+
     embed.add_field(name="", value= message, inline=False)
     await ctx.author.send(embed = embed)
