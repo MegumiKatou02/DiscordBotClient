@@ -60,9 +60,9 @@ async def on_message(message):
     await chatting.on_message(message, clients) 
 
 
-@clients.command()
-async def server_info(ctx):
-    guild = ctx.guild
+@clients.tree.command(description = "Hiển thị thông tin máy chủ") #
+async def server(interaction: discord.Interaction):
+    guild = interaction.guild
 
     embed = discord.Embed(title=f"Thông tin về server {guild.name}", color=discord.Color.blue())
 
@@ -76,7 +76,10 @@ async def server_info(ctx):
     embed.add_field(name="Số Thành Viên", value=guild.member_count, inline=False)
     embed.add_field(name="Số Kênh", value=len(guild.channels), inline=False)
 
-    await ctx.send(embed=embed)
+    owner = guild.owner
+    embed.add_field(name="Server Owner", value=owner.mention, inline=False)
+
+    await interaction.response.send_message(embed=embed)
 
 @clients.command()
 async def helpkwb(ctx):
@@ -118,7 +121,7 @@ async def avt(interaction: discord.Interaction, member: discord.Member = None):
 async def run(ctx):
     await ctx.send("Khu Wibu bot discord is running")
 
-@clients.tree.command(name="choose")
+@clients.tree.command(name="choose", description = "Random 1 trong nhiều lựa chọn")
 async def choose(interaction: discord.Interaction, choice1: str, choice2: str, choice3: str = None, 
                  choice4: str = None, choice5: str = None, choice6: str = None, choice7: str = None,
                  choice8: str = None, choice9: str = None, choice10: str = None):
