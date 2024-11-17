@@ -78,4 +78,20 @@ async def server_info(ctx):
 async def helpkwb(ctx):
     await help_list.send_help_message(ctx)
 
+@clients.command()
+async def avatar(ctx, member: discord.Member = None):
+    if not member:
+        member = ctx.author
+    
+    avatar_url = member.avatar.url
+
+    embed = discord.Embed(
+        title=f"Avatar của {member.display_name}",
+        description="Dưới đây là ảnh avatar của bạn!",
+        color=discord.Color.blue()
+    )
+    embed.set_image(url=avatar_url)
+
+    await ctx.send(embed=embed)
+    
 clients.run(config.TOKEN)
