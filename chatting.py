@@ -1,3 +1,4 @@
+import asyncio
 import re
 from discord.ext import commands
 
@@ -9,5 +10,12 @@ async def on_message(message, bot):
 
     if not message.author.bot and message.content.lower().startswith('chinh bel bel nga sap duong'):
         await message.channel.send('Co m nga ay')
+
+    if bot.user.mentioned_in(message) and not message.author.bot:
+        hello_message = await message.channel.send("Nhấn `>>helpkwb` để biết thêm thông tin !")
+
+        await asyncio.sleep(5)
+        
+        await hello_message.delete()
 
     await bot.process_commands(message)
