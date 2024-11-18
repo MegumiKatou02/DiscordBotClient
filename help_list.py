@@ -17,7 +17,7 @@ async def send_help_message(interaction: discord.Interaction):
     **/anime**
     **/math**
     **/event**
-    **/events_list**
+    **/events_list (permissions administrator)**
     Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
     """
     embed = discord.Embed(

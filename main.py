@@ -4,6 +4,7 @@ import random
 import re
 import discord
 from discord.ext import commands
+import requests
 from tabulate import tabulate
 from discord.ui import Select, View
 from discord import app_commands
@@ -41,7 +42,8 @@ async def on_ready():
 async def load_cogs():
     await clients.load_extension("cogs.send_dev")
     await clients.load_extension("cogs.event_server")
-
+    await clients.load_extension("cogs.query.send_GIF")
+    
 #goodbye
 @clients.tree.command()
 async def goodbye(interaction: discord.Interaction):
@@ -258,5 +260,10 @@ async def math_command(interaction: discord.Interaction, expression: str):
         await interaction.response.send_message(f"Kết quả: {form_answer}")
     except (sp.SympifyError, ValueError, ZeroDivisionError) as e:
         await interaction.response.send_message(f"Lỗi cú pháp hoặc toán học trong biểu thức: {str(e)}", ephemeral=True)
+
+#hug
+# @clients.tree.command(name="hug", description="hug")
+# async def hug_command(interaction: discord.Interaction):
+#     await hug.Interaction("hug", interaction)
 
 clients.run(config.TOKEN)
