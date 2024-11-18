@@ -12,7 +12,7 @@ async def on_message(message, bot):
         await message.channel.send('Co m nga ay')
 
     if bot.user.mentioned_in(message) and not message.author.bot:
-        hello_message = await message.channel.send("Nhấn `>>helpkwb` để biết thêm thông tin !")
+        hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
 
         await asyncio.sleep(5)
         
