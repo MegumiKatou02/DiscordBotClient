@@ -3,7 +3,7 @@ import json
 from discord import app_commands
 from discord.ext import commands, tasks
 from discord.ui import Button, View
-import os
+# import os
 from datetime import datetime, timedelta
 import re
 
@@ -16,23 +16,23 @@ class EventServer(commands.Cog):
 
     def load_events_data(self):
         """Tải dữ liệu sự kiện từ tệp JSON."""
-        if os.path.exists(self.events_data_file) and os.path.getsize(self.events_data_file) > 0:
-            try:
-                with open(self.events_data_file, "r") as file:
-                    self.events_data = json.load(file)
+        # if os.path.exists(self.events_data_file) and os.path.getsize(self.events_data_file) > 0:
+        try:
+            with open(self.events_data_file, "r") as file:
+                self.events_data = json.load(file)
 
-                    for server_id, events in self.events_data.items():
-                        for event_info in events.values():
-                            event_info["end_time"] = datetime.strptime(event_info["end_time"], "%Y-%m-%d %H:%M:%S")
-            except json.JSONDecodeError:
-                print("Tệp JSON không hợp lệ. Sử dụng dữ liệu mặc định.")
-                self.events_data = {} 
-        else:
+                for server_id, events in self.events_data.items():
+                    for event_info in events.values():
+                        event_info["end_time"] = datetime.strptime(event_info["end_time"], "%Y-%m-%d %H:%M:%S")
+        except json.JSONDecodeError:
+            print("Tệp JSON không hợp lệ. Sử dụng dữ liệu mặc định.")
             self.events_data = {} 
+        # else:
+        #     self.events_data = {} 
 
     def save_events_data(self):
         """Lưu dữ liệu sự kiện vào tệp JSON."""
-        os.makedirs(os.path.dirname(self.events_data_file), exist_ok=True)
+        # os.makedirs(os.path.dirname(self.events_data_file), exist_ok=True)
 
         with open(self.events_data_file, "w") as file:
             events_data = {}
