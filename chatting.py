@@ -14,7 +14,7 @@ async def on_message(message, bot):
     if bot.user.mentioned_in(message) and not message.author.bot:
         hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
         
         await hello_message.delete()
 

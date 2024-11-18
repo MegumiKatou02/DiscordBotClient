@@ -16,6 +16,7 @@ async def send_help_message(interaction: discord.Interaction):
     **/weather**
     **/anime**
     **/math**
+    Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
     """
     embed = discord.Embed(
         title="Commands bot Khu Wibu",

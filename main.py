@@ -29,12 +29,20 @@ async def on_ready():
     game = discord.Game("Khu Wibu")
     await clients.change_presence(activity=game)
 
+    # load corgs
+    await load_cogs()
+
     await clients.tree.sync() 
 
     print("----------")
 
+
+#load file cogs
+async def load_cogs():
+    await clients.load_extension("cogs.send_dev")
+
 #goodbye
-@clients.command()
+@clients.tree.command()
 async def goodbye(interaction: discord.Interaction):
     await interaction.response.send_message("Cook gium cai <(\")")
 
@@ -194,6 +202,7 @@ async def reminder(interaction: discord.Interaction, time: str, *, message: str)
     except ValueError:
         await interaction.response.send_message("Vui lòng nhập thời gian đúng định dạng HH:MM (vd: 02:24)", ephemeral=True)
 
+#recent members
 @clients.tree.command(description="Danh sách các thành viên đã tham gia gần đây")
 async def recent_members(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.administrator:
