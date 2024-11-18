@@ -14,6 +14,8 @@ async def send_help_message(interaction: discord.Interaction):
     **/reminder**
     **/recent_members (permissions administrator)**
     **/weather**
+    **/anime**
+    **/math**
     """
     embed = discord.Embed(
         title="Commands bot Khu Wibu",
