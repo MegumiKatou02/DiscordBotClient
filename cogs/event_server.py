@@ -82,7 +82,7 @@ class EventServer(commands.Cog):
 
         return timedelta(days=days, hours=hours, minutes=minutes)
 
-    
+#event
     @app_commands.command(name="event", description="Tạo sự kiện với mã sự kiện, tên, chủ đề và thời gian kết thúc")
     @app_commands.describe(
         event_code="Mã sự kiện duy nhất (không trùng lặp).",
@@ -97,12 +97,14 @@ class EventServer(commands.Cog):
 
         try:
             duration_obj = self.parse_duration(duration)
-            one_minute = timedelta(minutes=1) 
-            if(duration_obj < one_minute):
-                await interaction.response.send_message("Thời gian kết thúc phải lớn hơn 1 phút", ephemeral=True)
-                return
+            
         except ValueError:
             await interaction.response.send_message("Định dạng thời gian kết thúc không hợp lệ. Vui lòng nhập theo định dạng 'XdYhZm' (ví dụ: 3d2h1m).", ephemeral=True)
+            return
+
+        one_minute = timedelta(minutes=1) 
+        if(duration_obj < one_minute):
+            await interaction.response.send_message("Thời gian kết thúc phải lớn hơn 1 phút", ephemeral=True)
             return
 
         end_time_obj = datetime.now() + duration_obj
@@ -178,6 +180,34 @@ class EventServer(commands.Cog):
         )
 
         await interaction.response.send_message(embed=embed, view=view)
+
+#events list
+    @app_commands.command(name="events_list", description="Liệt kê mã sự kiện, tên sự kiện và người tạo sự kiện trong server hiện tại.")
+    async def events_in_server(self, interaction: discord.Interaction):
+        server_id = str(interaction.guild.id)  
+
+        try:
+            with open('data/events_data.json', 'r', encoding='utf-8') as file:
+                events_data = json.load(file)
+        except FileNotFoundError:
+            await interaction.response.send_message("Không tìm thấy dữ liệu sự kiện.", ephemeral=True)
+            return
+
+        if server_id not in events_data:
+            await interaction.response.send_message("Không có sự kiện nào trong server này.", ephemeral=True)
+            return
+
+        server_events = events_data[server_id]
+
+        embed = discord.Embed(title="Sự kiện trong server", color=discord.Color.blue())
+        for event_code, event_info in server_events.items():
+            embed.add_field(
+                name=f"Mã sự kiện: {event_code} - Tên sự kiện: {event_info['name']}",
+                value=f"Người tạo: {event_info['creator_name']}",
+                inline=False
+            )
+
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(EventServer(bot))
