@@ -1,11 +1,13 @@
 import asyncio
 from datetime import datetime, timedelta
 import random
+import re
 import discord
 from discord.ext import commands
 from tabulate import tabulate
 from discord.ui import Select, View
 from discord import app_commands
+import sympy as sp
 
 import Anime
 import chatting
@@ -230,5 +232,21 @@ async def weather(interaction: discord.Interaction, city_name: str):
 @clients.tree.command(name="anime", description="Tìm kiếm hình ảnh anime theo tên")
 async def anime(interaction: discord.Interaction, name: str):
     await Anime.anime_command(interaction, name)
+
+#math
+@clients.tree.command(name="math", description="Tính toán biểu thức toán học")
+async def math_command(interaction: discord.Interaction, expression: str):
+    try:
+        expression = expression.replace("^", "**")
+        expression = expression.replace("e", "E")
+        expression = re.sub(r'(\d+)!', r'factorial(\1)', expression)
+
+        result = sp.sympify(expression)
+        answer = result.evalf()
+        form_answer = str(answer).rstrip('0').rstrip('.') if '.' in str(answer) else str(answer)
+
+        await interaction.response.send_message(f"Kết quả: {form_answer}")
+    except (sp.SympifyError, ValueError, ZeroDivisionError) as e:
+        await interaction.response.send_message(f"Lỗi cú pháp hoặc toán học trong biểu thức: {str(e)}", ephemeral=True)
 
 clients.run(config.TOKEN)
