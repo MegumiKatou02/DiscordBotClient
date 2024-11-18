@@ -7,6 +7,7 @@ from tabulate import tabulate
 from discord.ui import Select, View
 from discord import app_commands
 
+import Anime
 import chatting
 import config
 import game
@@ -224,5 +225,10 @@ async def recent_members(interaction: discord.Interaction):
 @clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
 async def weather(interaction: discord.Interaction, city_name: str):
     await Weather.weather_command(interaction, city_name)
+
+#anime
+@clients.tree.command(name="anime", description="Tìm kiếm hình ảnh anime theo tên")
+async def anime(interaction: discord.Interaction, name: str):
+    await Anime.anime_command(interaction, name)
 
 clients.run(config.TOKEN)
