@@ -184,6 +184,9 @@ class EventServer(commands.Cog):
 #events list
     @app_commands.command(name="events_list", description="Liệt kê mã sự kiện, tên sự kiện và người tạo sự kiện trong server hiện tại.")
     async def events_in_server(self, interaction: discord.Interaction):
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này.", ephemeral=True)
+            return
         server_id = str(interaction.guild.id)  
 
         try:
