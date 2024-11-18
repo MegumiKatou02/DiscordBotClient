@@ -1,6 +1,6 @@
 import random
+import aiohttp
 import discord
-import requests
 from discord.ext import commands
 from discord import app_commands
 
@@ -12,42 +12,63 @@ GIPHY_URL = "https://api.giphy.com/v1/gifs/search"
 class SendGIF(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    def get_pharse(self, source: str, style: str, target: str):
+        hug = [
+            f"{target} receives a big, warm hug from {source}!",
+            f"{target} is enveloped in a cozy hug by {source}.",
+            f"{target} gets a sweet hug from {source}.",
+            f"{target} is hugged tightly by {source}.",
+            f"A warm embrace for {target} from {source}!"
+        ]
+        kiss = [
+            f"{target} receives a loving kiss from {source}!",
+            f"{target} gets a sweet kiss from {source}.",
+            f"A kiss on the cheek for {target} from {source}.",
+            f"{target} is kissed by {source}.",
+            f"{target} gets a gentle kiss from {source}!"
+        ]
+        # print(list("hug"))
+        if style == "hug":
+            return random.choice(hug)
+        elif style == "kiss":
+            return random.choice(kiss)
+        return ""
 
-    async def fetch_gif(self, style: str):
+    async def fetch_gif(self, style: str, interaction: discord.Interaction, user: discord.Member):
         query = style + ' anime'
         params = {
             'q': query,
             'api_key': GIPHY_API_KEY,
             'limit': 10
         }
-        response = requests.get(GIPHY_URL, params=params)
-        data = response.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(GIPHY_URL, params=params) as response:
+                data = await response.json()
 
-        if data['data']:
-            return random.choice(data['data'])['images']['original']['url']
-        else:
-            return None
+                if data['data']:
+                    gif_url = random.choice(data['data'])['images']['original']['url']
+                    title_random = self.get_pharse(interaction.user, style, user.name)
+
+                    embed = discord.Embed(
+                        title=title_random,
+                        description=f"Here's a GIF of a {style} for {user.mention}!",
+                        color=discord.Color.blue()
+                    )
+                    embed.set_image(url=gif_url)
+                    await interaction.response.send_message(embed=embed)
+                else:
+                    await interaction.response.send_message(f"{interaction.user} {style} {user.name}, nhưng không tìm thấy GIF :(")
 
     @app_commands.command(name="hug", description="Lệnh ôm ai đó và gửi GIF")
-    @commands.cooldown(1, 5, commands.BucketType.user)
     async def hug_command(self, interaction: discord.Interaction, user: discord.Member):
-        """Lệnh ôm ai đó và gửi GIF"""
-        gif_url = await self.fetch_gif("hug")
-        if gif_url:
-            embed = discord.Embed(
-                title=f"{interaction.user} hugs {user.name}",
-                description=f"Here's a GIF of a hug for {user.mention}!",
-                color=discord.Color.blue()
-            )
-            embed.set_image(url=gif_url)
-            await interaction.response.send_message(embed=embed)
-        else:
-            await interaction.response.send_message(f"{interaction.user} hugs {user.name}, nhưng không tìm thấy GIF :(")
+        await self.fetch_gif("hug", interaction, user)
 
-    @hug_command.error
-    async def hug_command_error(self, interaction: discord.Interaction, error: Exception):
-        if isinstance(error, commands.CommandOnCooldown):
-            await interaction.response.send_message(f"Bạn phải đợi {round(error.retry_after, 1)} giây trước khi sử dụng lại lệnh này.", ephemeral=True)
+    @app_commands.command(name="kiss", description="Lệnh kiss ai đó và gửi GIF")
+    async def kiss(self, interaction: discord.Interaction, user: discord.Member):
+        await self.fetch_gif("kiss", interaction, user)
+
+    
 
 async def setup(bot):
     await bot.add_cog(SendGIF(bot))
