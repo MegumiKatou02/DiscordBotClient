@@ -40,6 +40,7 @@ async def on_ready():
 #load file cogs
 async def load_cogs():
     await clients.load_extension("cogs.send_dev")
+    await clients.load_extension("cogs.event_server")
 
 #goodbye
 @clients.tree.command()

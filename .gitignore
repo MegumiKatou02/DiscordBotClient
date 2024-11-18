@@ -1,5 +1,7 @@
 config.py
 
+events_data.json
+
 .env
 
 __pycache__/
