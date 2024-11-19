@@ -3,6 +3,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+import config
+
 class SendDev(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -23,7 +25,7 @@ class SendDev(commands.Cog):
                 )
                 return
 
-        dev_user = await self.bot.fetch_user(604949724788817920)  
+        dev_user = await self.bot.fetch_user(config.USER_ID)  
         try:
             guild_name = interaction.guild.name if interaction.guild else "DM"
             content = f"Tin nhắn từ **{interaction.user.name}** từ server **{guild_name}**:\n{message}"
