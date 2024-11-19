@@ -144,7 +144,7 @@ class EventServer(commands.Cog):
 
             embed = discord.Embed(
                 title=f"Sự kiện: {name}",
-                description=f"**Chủ đề**: {topic}\n**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n**Người tạo**: {creator_name}\n\n**Số người tham gia: {len(self.events_data[server_id][event_code]['participants'])}**",
+                description=f"**Người tạo**: {creator_name}\n**Chủ đề**: \n  {topic}\n**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n**Số người tham gia: {len(self.events_data[server_id][event_code]['participants'])}**",
                 color=discord.Color.blue()
             )
             await interaction.message.edit(embed=embed) 

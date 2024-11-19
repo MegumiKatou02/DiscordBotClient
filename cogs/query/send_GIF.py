@@ -28,7 +28,7 @@ class SendGIF(commands.Cog):
             f"{target} is kissed by {source}.",
             f"{target} gets a gentle kiss from {source}!"
         ]
-        # print(list("hug"))
+
         if style == "hug":
             return random.choice(hug)
         elif style == "kiss":
@@ -67,8 +67,6 @@ class SendGIF(commands.Cog):
     @app_commands.command(name="kiss", description="Lệnh kiss ai đó và gửi GIF")
     async def kiss(self, interaction: discord.Interaction, user: discord.Member):
         await self.fetch_gif("kiss", interaction, user)
-
-    
 
 async def setup(bot):
     await bot.add_cog(SendGIF(bot))

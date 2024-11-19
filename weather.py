@@ -10,7 +10,6 @@ async def weather_command(interaction: discord.Interaction, city_name: str):
 
     response = requests.get(url)
     data = response.json()
-    # print(data)
 
     if data["cod"] != 200:
         await interaction.response.send_message(f"Không thể lấy thông tin thời tiết cho thành phố: {city_name}.", ephemeral=True)

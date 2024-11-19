@@ -9,6 +9,7 @@ from tabulate import tabulate
 from discord.ui import Select, View
 from discord import app_commands
 import sympy as sp
+import psutil
 
 import Anime
 import chatting
@@ -27,6 +28,7 @@ clients = commands.Bot(command_prefix='>>', intents=intents)
 async def on_ready():
     print("ready !!!")
     print("----------")
+
     game = discord.Game("Khu Wibu")
     await clients.change_presence(activity=game)
 
@@ -48,16 +50,6 @@ async def load_cogs():
 @clients.tree.command()
 async def goodbye(interaction: discord.Interaction):
     await interaction.response.send_message("Cook gium cai <(\")")
-
-#member join
-@clients.event
-async def member_join(member):
-    channel = clients.get_channel(1210656611270533222)
-    if channel:
-        print("nice.")
-        await channel.send(f"Welcome, {member.name}!")
-    else:
-        print("Channel not found or invalid channel ID.")
 
 #say
 @clients.tree.command(description="Nói thông qua bot")
@@ -99,7 +91,7 @@ async def server(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed)
 
 #help
-@clients.tree.command(description="Help / Show commands")
+@clients.tree.command(description="Help and show commands")
 async def help(interaction: discord.Interaction):
     await help_list.send_help_message(interaction)
 
@@ -260,5 +252,11 @@ async def math_command(interaction: discord.Interaction, expression: str):
         await interaction.response.send_message(f"Kết quả: {form_answer}")
     except (sp.SympifyError, ValueError, ZeroDivisionError) as e:
         await interaction.response.send_message(f"Lỗi cú pháp hoặc toán học trong biểu thức: {str(e)}", ephemeral=True)
+
+@clients.tree.command()
+async def log_memory_usage(interaction: discord.Interaction):
+    process = psutil.Process()
+    mem_info = process.memory_info()
+    await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
 clients.run(config.TOKEN)

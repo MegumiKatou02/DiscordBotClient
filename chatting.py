@@ -1,6 +1,5 @@
 import asyncio
 import re
-from discord.ext import commands
 
 async def on_message(message, bot):
     greetings = ['chào', 'hello', 'hi', 'yo']
