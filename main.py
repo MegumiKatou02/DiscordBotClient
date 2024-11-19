@@ -6,8 +6,6 @@ import discord
 from discord.ext import commands
 import requests
 from tabulate import tabulate
-from discord.ui import Select, View
-from discord import app_commands
 import sympy as sp
 import psutil
 
@@ -45,6 +43,7 @@ async def load_cogs():
     await clients.load_extension("cogs.send_dev")
     await clients.load_extension("cogs.event_server")
     await clients.load_extension("cogs.query.send_GIF")
+    await clients.load_extension("cogs.avatar")
     
 #goodbye
 @clients.tree.command()
@@ -94,40 +93,6 @@ async def server(interaction: discord.Interaction):
 @clients.tree.command(description="Help and show commands")
 async def help(interaction: discord.Interaction):
     await help_list.send_help_message(interaction)
-
-#avatar
-@clients.tree.command(description="Hiển thị avatar của một thành viên")
-async def avatar(interaction: discord.Interaction, member: discord.Member = None):
-    if not member:
-        member = interaction.user  
-    
-    avatar_url = member.display_avatar.url 
-
-    embed = discord.Embed(
-        title=f"Avatar của {member.display_name}",
-        description="",
-        color=discord.Color.blue()
-    )
-    embed.set_image(url=avatar_url)
-
-    await interaction.response.send_message(embed=embed)
-
-#avt
-@clients.tree.command(description="Hiển thị avatar của một thành viên")
-async def avt(interaction: discord.Interaction, member: discord.Member = None):
-    if not member:
-        member = interaction.user  
-    
-    avatar_url = member.display_avatar.url 
-
-    embed = discord.Embed(
-        title=f"Avatar của {member.display_name}",
-        description="",
-        color=discord.Color.blue()
-    )
-    embed.set_image(url=avatar_url)
-
-    await interaction.response.send_message(embed=embed)
 
 #run
 @clients.command()
