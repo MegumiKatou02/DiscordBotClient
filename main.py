@@ -261,9 +261,4 @@ async def math_command(interaction: discord.Interaction, expression: str):
     except (sp.SympifyError, ValueError, ZeroDivisionError) as e:
         await interaction.response.send_message(f"Lỗi cú pháp hoặc toán học trong biểu thức: {str(e)}", ephemeral=True)
 
-#hug
-# @clients.tree.command(name="hug", description="hug")
-# async def hug_command(interaction: discord.Interaction):
-#     await hug.Interaction("hug", interaction)
-
 clients.run(config.TOKEN)
