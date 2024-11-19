@@ -4,13 +4,11 @@ import random
 import re
 import discord
 from discord.ext import commands
-import requests
-from tabulate import tabulate
 import sympy as sp
 import psutil
 
 import Anime
-import chatting
+from message import on_message_event
 import config
 import game
 import help_list
@@ -36,7 +34,6 @@ async def on_ready():
     await clients.tree.sync() 
 
     print("----------")
-
 
 #load file cogs
 async def load_cogs():
@@ -65,7 +62,7 @@ async def roll_command(interaction: discord.Interaction, min_value: int = 0, max
 #check prefix
 @clients.event
 async def on_message(message):
-    await chatting.on_message(message, clients) 
+    await on_message_event(message, clients)
 
 #server
 @clients.tree.command(description = "Hiển thị thông tin máy chủ") #
