@@ -1,6 +1,6 @@
 config.py
 
-events_data.json
+events.db
 
 .env
 

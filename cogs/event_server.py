@@ -1,73 +1,117 @@
 import discord
-import json
+import sqlite3
 from discord import app_commands
 from discord.ext import commands, tasks
 from discord.ui import Button, View
-# import os
 from datetime import datetime, timedelta
 import re
 
 class EventServer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.events_data_file = "data/events_data.json"
-        self.load_events_data()
-        self.check_events_end.start() 
+        self.db_file = "database/events.db"
+        self.init_database()
+        self.check_events_end.start()
 
-    def load_events_data(self):
-        """Tải dữ liệu sự kiện từ tệp JSON."""
-        # if os.path.exists(self.events_data_file) and os.path.getsize(self.events_data_file) > 0:
-        try:
-            with open(self.events_data_file, "r") as file:
-                self.events_data = json.load(file)
+    def init_database(self):
+        """Khởi tạo cơ sở dữ liệu SQLite."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                server_id TEXT,
+                event_code TEXT,
+                name TEXT,
+                topic TEXT,
+                end_time TEXT,
+                creator_id INTEGER,
+                creator_name TEXT,
+                PRIMARY KEY (server_id, event_code)
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS participants (
+                server_id TEXT,
+                event_code TEXT,
+                user_id INTEGER,
+                user_name TEXT,
+                PRIMARY KEY (server_id, event_code, user_id)
+            )
+        """)
+        conn.commit()
+        conn.close()
 
-                for server_id, events in self.events_data.items():
-                    for event_info in events.values():
-                        event_info["end_time"] = datetime.strptime(event_info["end_time"], "%Y-%m-%d %H:%M:%S")
-        except json.JSONDecodeError:
-            print("Tệp JSON không hợp lệ. Sử dụng dữ liệu mặc định.")
-            self.events_data = {} 
-        # else:
-        #     self.events_data = {} 
+    def save_event(self, server_id, event_code, name, topic, end_time, creator_id, creator_name):
+        """Lưu sự kiện vào cơ sở dữ liệu."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO events (server_id, event_code, name, topic, end_time, creator_id, creator_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (server_id, event_code, name, topic, end_time.strftime("%Y-%m-%d %H:%M:%S"), creator_id, creator_name))
+        conn.commit()
+        conn.close()
 
-    def save_events_data(self):
-        """Lưu dữ liệu sự kiện vào tệp JSON."""
-        # os.makedirs(os.path.dirname(self.events_data_file), exist_ok=True)
+    def delete_event(self, server_id, event_code):
+        """Xóa sự kiện khỏi cơ sở dữ liệu."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM events WHERE server_id = ? AND event_code = ?", (server_id, event_code))
+        cursor.execute("DELETE FROM participants WHERE server_id = ? AND event_code = ?", (server_id, event_code))
+        conn.commit()
+        conn.close()
 
-        with open(self.events_data_file, "w") as file:
-            events_data = {}
-            for server_id, events in self.events_data.items():
-                events_data[server_id] = {}
-                for event_code, event_info in events.items():
-                    events_data[server_id][event_code] = {
-                        "name": event_info["name"],
-                        "topic": event_info["topic"],
-                        "end_time": event_info["end_time"].strftime("%Y-%m-%d %H:%M:%S") if "end_time" in event_info else None,
-                        "creator_id": event_info["creator_id"],
-                        "creator_name": event_info["creator_name"],
-                        "participants": [{"id": participant["id"], "name": participant["name"]} for participant in event_info["participants"]]
-                    }
-            json.dump(events_data, file, indent=4)
+    def add_participant(self, server_id, event_code, user_id, user_name):
+        """Thêm người tham gia vào sự kiện."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT OR IGNORE INTO participants (server_id, event_code, user_id, user_name)
+            VALUES (?, ?, ?, ?)
+        """, (server_id, event_code, user_id, user_name))
+        conn.commit()
+        conn.close()
 
+    def remove_participant(self, server_id, event_code, user_id):
+        """Xóa người tham gia khỏi sự kiện."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+            DELETE FROM participants
+            WHERE server_id = ? AND event_code = ? AND user_id = ?
+        """, (server_id, event_code, user_id))
+        conn.commit()
+        conn.close()
+
+    def get_events(self, server_id):
+        """Lấy danh sách sự kiện từ cơ sở dữ liệu."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM events WHERE server_id = ?", (server_id,))
+        events = cursor.fetchall()
+        conn.close()
+        return events
+    
     @tasks.loop(minutes=1)
     async def check_events_end(self):
         """Kiểm tra và xóa các sự kiện đã kết thúc."""
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("SELECT server_id, event_code, end_time FROM events")
+        events = cursor.fetchall()
         current_time = datetime.now()
 
-        for server_id, events in list(self.events_data.items()):
-            for event_code, event_info in list(events.items()):
-                if "end_time" in event_info:
-                    end_time = event_info["end_time"]
-                    if current_time >= end_time:
-                        del self.events_data[server_id][event_code] 
-                        self.save_events_data() 
-                        print(f"Sự kiện {event_code} đã kết thúc và đã bị xóa.")
+        for server_id, event_code, end_time in events:
+            end_time_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+            if current_time >= end_time_obj:
+                self.delete_event(server_id, event_code)
+                print(f"Sự kiện {event_code} đã kết thúc và đã bị xóa.")
+        conn.close()
 
     def parse_duration(self, duration: str):
         """Chuyển đổi chuỗi như '3d2h' thành đối tượng timedelta."""
         days, hours, minutes = 0, 0, 0
 
-        # Tìm các đơn vị ngày, giờ và phút trong chuỗi
         days_match = re.search(r'(\d+)d', duration)
         if days_match:
             days = int(days_match.group(1))
@@ -82,89 +126,120 @@ class EventServer(commands.Cog):
 
         return timedelta(days=days, hours=hours, minutes=minutes)
 
-#event
     @app_commands.command(name="event", description="Tạo sự kiện với mã sự kiện, tên, chủ đề và thời gian kết thúc")
-    @app_commands.describe(
-        event_code="Mã sự kiện duy nhất (không trùng lặp).",
-        name="Tên sự kiện của bạn.",
-        topic="Chủ đề mô tả sự kiện (có thể xuống dòng bằng \\n).",
-        duration="Thời gian kết thúc sự kiện, ví dụ: 3d2h"
-    )
     async def event(self, interaction: discord.Interaction, event_code: str, name: str, topic: str, duration: str):
         """Tạo một sự kiện mới với mã sự kiện, tên, chủ đề và thời gian kết thúc."""
-
         topic = topic.replace("\\n", "\n")
-
         try:
             duration_obj = self.parse_duration(duration)
-            
         except ValueError:
-            await interaction.response.send_message("Định dạng thời gian kết thúc không hợp lệ. Vui lòng nhập theo định dạng 'XdYhZm' (ví dụ: 3d2h1m).", ephemeral=True)
+            await interaction.response.send_message("Định dạng thời gian không hợp lệ!", ephemeral=True)
             return
 
-        one_minute = timedelta(minutes=1) 
-        if(duration_obj < one_minute):
-            await interaction.response.send_message("Thời gian kết thúc phải lớn hơn 1 phút", ephemeral=True)
+        if duration_obj < timedelta(minutes=1):
+            await interaction.response.send_message("Thời gian kết thúc phải lớn hơn 1 phút!", ephemeral=True)
             return
 
         end_time_obj = datetime.now() + duration_obj
+        server_id = str(interaction.guild.id)
 
-        server_id = interaction.guild.id
-
-        if server_id not in self.events_data:
-            self.events_data[server_id] = {}
-
-        if event_code in self.events_data[server_id]:
-            await interaction.response.send_message(f"Sự kiện với mã '{event_code}' đã tồn tại trong server này.", ephemeral=True)
+        existing_events = self.get_events(server_id)
+        if any(event[1] == event_code for event in existing_events):
+            await interaction.response.send_message(f"Mã sự kiện '{event_code}' đã tồn tại!", ephemeral=True)
             return
 
-        creator_id = interaction.user.id
-        creator_name = interaction.user.name
+        self.save_event(server_id, event_code, name, topic, end_time_obj, interaction.user.id, interaction.user.name)
 
-        self.events_data[server_id][event_code] = {
-            "name": name,
-            "topic": topic,
-            "end_time": end_time_obj,
-            "creator_id": creator_id,
-            "creator_name": creator_name,
-            "participants": []
-        }
-
-        self.save_events_data()  
         join_button = Button(label="Tham gia", style=discord.ButtonStyle.green)
         leave_button = Button(label="Huỷ tham gia", style=discord.ButtonStyle.red)
 
         async def join_callback(interaction: discord.Interaction):
-            if interaction.user.id not in [p["id"] for p in self.events_data[server_id][event_code]["participants"]]:
-                self.events_data[server_id][event_code]["participants"].append({"id": interaction.user.id, "name": interaction.user.name})
-                self.save_events_data() 
-                await interaction.response.send_message(f"Bạn đã tham gia sự kiện: {name}!", ephemeral=True)
-            else:
-                await interaction.response.send_message("Bạn đã tham gia sự kiện này rồi!", ephemeral=True)
+            server_id = str(interaction.guild.id)
+            user_id = interaction.user.id
+            user_name = interaction.user.name
+
+            conn = sqlite3.connect(self.db_file)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM participants
+                WHERE server_id = ? AND event_code = ? AND user_id = ?
+            """, (server_id, event_code, user_id))
+            already_participated = cursor.fetchone()[0] > 0
+            conn.close() ##
+
+            if already_participated:
+                await interaction.response.send_message("Bạn đã tham gia sự kiện này trước đó!", ephemeral=True)
+                return
+
+            self.add_participant(server_id, event_code, user_id, user_name)
+            await interaction.response.send_message(f"Bạn đã tham gia sự kiện: {name}!", ephemeral=True)
+
+            conn = sqlite3.connect(self.db_file)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM participants
+                WHERE server_id = ? AND event_code = ?
+            """, (server_id, event_code))
+            participant_count = cursor.fetchone()[0]
+            conn.close()
 
             embed = discord.Embed(
                 title=f"Sự kiện: {name}",
-                description=f"**Người tạo**: {creator_name}\n**Chủ đề**: \n  {topic}\n**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n**Số người tham gia: {len(self.events_data[server_id][event_code]['participants'])}**",
+                description=(
+                    f"**Người tạo**: {user_name}\n"
+                    f"**Chủ đề**: \n  {topic}\n"
+                    f"**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                    f"**Số người tham gia: {participant_count}**"
+                ),
                 color=discord.Color.blue()
             )
-            await interaction.message.edit(embed=embed) 
-
+            await interaction.message.edit(embed=embed)
+       
         async def leave_callback(interaction: discord.Interaction):
-            participants = self.events_data[server_id][event_code]["participants"]
-            participant_to_remove = next((p for p in participants if p["id"] == interaction.user.id), None)
-            if participant_to_remove:
-                self.events_data[server_id][event_code]["participants"].remove(participant_to_remove)
-                self.save_events_data()  
-                await interaction.response.send_message(f"Bạn đã huỷ tham gia sự kiện: {name}!", ephemeral=True)
-            else:
-                await interaction.response.send_message("Bạn chưa tham gia sự kiện này!", ephemeral=True)
+            if self.check_end_event(datetime.now()):
+                await interaction.response.send_message("Sự kiện này đã kết thúc, bạn không thể tham gia nữa.", ephemeral=True)
+                return
+
+            server_id = str(interaction.guild.id)
+            user_id = interaction.user.id
+            user_name = interaction.user.name
+
+            conn = sqlite3.connect(self.db_file)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM participants
+                WHERE server_id = ? AND event_code = ? AND user_id = ?
+            """, (server_id, event_code, user_id))
+            is_participant = cursor.fetchone()[0] > 0
+            conn.close()
+
+            if not is_participant:
+                await interaction.response.send_message("Bạn chưa tham gia sự kiện này, không thể huỷ tham gia!", ephemeral=True)
+                return
+
+            self.remove_participant(server_id, event_code, user_id)
+            await interaction.response.send_message(f"Bạn đã huỷ tham gia sự kiện: {name}!", ephemeral=True)
+
+            conn = sqlite3.connect(self.db_file)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM participants
+                WHERE server_id = ? AND event_code = ?
+            """, (server_id, event_code))
+            participant_count = cursor.fetchone()[0]
+            conn.close()
 
             embed = discord.Embed(
                 title=f"Sự kiện: {name}",
-                description=f"**Người tạo**: {creator_name}\n**Chủ đề**: \n  {topic}\n**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n**Số người tham gia: {len(self.events_data[server_id][event_code]['participants'])}**",
+                description=(
+                    f"**Người tạo**: {user_name}\n"
+                    f"**Chủ đề**: \n  {topic}\n"
+                    f"**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                    f"**Số người tham gia: {participant_count}**"
+                ),
                 color=discord.Color.blue()
             )
-            await interaction.message.edit(embed=embed)  
+            await interaction.message.edit(embed=embed)
 
         join_button.callback = join_callback
         leave_button.callback = leave_callback
@@ -175,42 +250,44 @@ class EventServer(commands.Cog):
 
         embed = discord.Embed(
             title=f"Sự kiện: {name}",
-            description=f"**Người tạo**: {creator_name}\n**Chủ đề**: \n  {topic}\n**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n**Số người tham gia: 0**",
+            description=(
+                f"**Người tạo**: {interaction.user.name}\n"
+                f"**Chủ đề**: \n  {topic}\n"
+                f"**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                f"**Số người tham gia: 0**"
+            ),
             color=discord.Color.blue()
         )
 
         await interaction.response.send_message(embed=embed, view=view)
 
-#events list
-    @app_commands.command(name="events_list", description="Liệt kê mã sự kiện, tên sự kiện và người tạo sự kiện trong server hiện tại.")
+    @app_commands.command(name="events_list", description="Liệt kê danh sách sự kiện có trong Server")
     async def events_in_server(self, interaction: discord.Interaction):
-        if not interaction.user.guild_permissions.administrator:
-            await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này.", ephemeral=True)
-            return
-        server_id = str(interaction.guild.id)  
+        server_id = str(interaction.guild.id)
 
-        try:
-            with open('data/events_data.json', 'r', encoding='utf-8') as file:
-                events_data = json.load(file)
-        except FileNotFoundError:
-            await interaction.response.send_message("Không tìm thấy dữ liệu sự kiện.", ephemeral=True)
-            return
+        events = self.get_events(server_id)
 
-        if server_id not in events_data:
+        if not events:
             await interaction.response.send_message("Không có sự kiện nào trong server này.", ephemeral=True)
             return
 
-        server_events = events_data[server_id]
+        event_list = []
+        for event in events:
+            event_code, name, end_time, creator_name = event[1], event[2], event[4], event[6]
+            end_time_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+            event_list.append(f"**Mã sự kiện**: {event_code}\n"
+                            f"**Tên sự kiện**: {name}\n"
+                            f"**Thời gian kết thúc**: {end_time_obj.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                            f"**Người tạo**: {creator_name}\n")
 
-        embed = discord.Embed(title="Sự kiện trong server", color=discord.Color.blue())
-        for event_code, event_info in server_events.items():
-            embed.add_field(
-                name=f"Mã sự kiện: {event_code} - Tên sự kiện: {event_info['name']}",
-                value=f"Người tạo: {event_info['creator_name']}",
-                inline=False
-            )
+        
+        embed = discord.Embed(
+            title="Danh sách sự kiện",
+            description="\n".join(event_list),
+            color=discord.Color.blue()
+        )
 
         await interaction.response.send_message(embed=embed)
-
+            
 async def setup(bot):
     await bot.add_cog(EventServer(bot))
