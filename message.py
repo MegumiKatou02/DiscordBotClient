@@ -17,8 +17,8 @@ async def on_message_event(message, bot):
         response = random.choice(responses) 
         await message.channel.send(response)
 
-    if not message.author.bot and message.content.lower().startswith('chinh bel bel nga sap duong'):
-        await message.channel.send('Co m nga ay')
+    # if not message.author.bot and message.content.lower().startswith('chinh bel bel nga sap duong'):
+    #     await message.channel.send('Co m nga ay')
 
     if not message.author.bot and re.search(r'\bbel bel nga sap duong\b$', message.content.lower()):
         await message.channel.send('Co m nga ay')

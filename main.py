@@ -59,7 +59,7 @@ async def say(interaction: discord.Interaction, *, message: str):
 async def roll_command(interaction: discord.Interaction, min_value: int = 0, max_value: int = 1000):
     await game.roll(interaction, min_value, max_value)
 
-#check prefix
+#check prefix //
 @clients.event
 async def on_message(message):
     await on_message_event(message, clients)
