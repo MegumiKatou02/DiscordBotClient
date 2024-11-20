@@ -196,10 +196,6 @@ class EventServer(commands.Cog):
             await interaction.message.edit(embed=embed)
        
         async def leave_callback(interaction: discord.Interaction):
-            if self.check_end_event(datetime.now()):
-                await interaction.response.send_message("Sự kiện này đã kết thúc, bạn không thể tham gia nữa.", ephemeral=True)
-                return
-
             server_id = str(interaction.guild.id)
             user_id = interaction.user.id
             user_name = interaction.user.name
