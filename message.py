@@ -23,6 +23,12 @@ async def on_message_event(message, bot):
     if not message.author.bot and re.search(r'\bbel bel nga sap duong\b$', message.content.lower()):
         await message.channel.send('Co m nga ay')
 
+    if not message.author.bot and re.search(r'\bchinh bel\b$', message.content.lower()):
+        await message.channel.send('Co m bel ay')
+
+    if not message.author.bot and re.search(r'\bching bel\b$', message.content.lower()):
+        await message.channel.send('Co m bel ay')
+
     if bot.user.mentioned_in(message) and not message.author.bot:
         hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
 
