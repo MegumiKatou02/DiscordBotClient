@@ -12,13 +12,14 @@ async def send_help_message(interaction: discord.Interaction):
     **/choose**
     **/find_member**
     **/reminder**
-    **/recent_members (permissions administrator)**
+    **/recent_members (administrator)**
     **/weather**
     **/anime**
     **/math**
     **/event**
-    **/events_list (permissions administrator)**
-    Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
+    **/events_list (administrator)**
+    1. Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
+    2. Truy cập **/notification** để cập nhật thông báo hay quy định mới !
     """
     embed = discord.Embed(
         title="Commands bot Khu Wibu",
