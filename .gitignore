@@ -1,8 +1,8 @@
 config.py
 
-events.db
+# events.db
 
-notifications.db
+# notifications.db
 
 .env
 

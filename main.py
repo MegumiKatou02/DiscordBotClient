@@ -17,6 +17,7 @@ import Weather
 intents = discord.Intents.default()  
 intents.message_content = True 
 intents.members = True
+intents.guilds = True
 
 clients = commands.Bot(command_prefix='>>', intents=intents)
 
@@ -34,6 +35,11 @@ async def on_ready():
     await clients.tree.sync() 
 
     print("----------")
+
+    print('Servers bot đã tham gia:')
+    for guild in clients.guilds:
+        print(f' - {guild.name} (ID: {guild.id})')
+
 
 #load file cogs
 async def load_cogs():

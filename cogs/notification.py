@@ -82,14 +82,34 @@ class NotificationServer(commands.Cog):
         else:
             await interaction.response.send_message("Không có thông báo nào.", ephemeral=True)
 
-    @app_commands.command(name="clear_notifications", description="Xóa tất cả thông báo")
-    async def clear_notifications(self, interaction: discord.Interaction):
+    def delete_notifications_range(self, start, end):
+        conn = sqlite3.connect(self.db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+            DELETE FROM notifications
+            WHERE notification_id BETWEEN ? AND ?
+        """, (start, end))
+        conn.commit()
+        conn.close()
+
+    @app_commands.command(name="clear_notifications", description="Xóa thông báo hoặc một khoảng thông báo.")
+    async def clear_notifications(self, interaction: discord.Interaction, start: int = None, end: int = None):
         if interaction.user.id != self.allowed_user_id:
             await interaction.response.send_message("Chỉ nhà phát triển mới dùng được lệnh này", ephemeral=True)
             return
 
-        self.delete_all_notifications() 
-        await interaction.response.send_message("Tất cả thông báo đã được xóa!", ephemeral=True)
+        if start is None and end is None:
+            self.delete_all_notifications()
+            await interaction.response.send_message("Tất cả thông báo đã được xóa!", ephemeral=True)
+        elif start is not None and end is not None:
+            if start > end:
+                await interaction.response.send_message("Tham số không hợp lệ! `start` phải nhỏ hơn hoặc bằng `end`.", ephemeral=True)
+                return
+
+            self.delete_notifications_range(start, end)
+            await interaction.response.send_message(f"Đã xóa thông báo từ {start} đến {end}!", ephemeral=True)
+        else:
+            await interaction.response.send_message("Vui lòng cung cấp cả `start` và `end` hoặc không cung cấp tham số nào để xóa tất cả.", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(NotificationServer(bot))
