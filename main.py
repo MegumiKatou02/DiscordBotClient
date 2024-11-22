@@ -48,6 +48,7 @@ async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
     await clients.load_extension("cogs.avatar")
     await clients.load_extension("cogs.notification")
+    await clients.load_extension("cogs.voice")
     
 #goodbye
 @clients.tree.command()
