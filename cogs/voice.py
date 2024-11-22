@@ -20,7 +20,6 @@ class AutoVoiceChannel(commands.Cog):
             new_channel = await guild.create_voice_channel(
                 name=self.default_channel_name.format(member=member.name),
                 category=after.channel.category,
-                user_limit=self.default_user_limit,
                 overwrites={
                     guild.default_role: discord.PermissionOverwrite(connect=True),  
                     # member: discord.PermissionOverwrite(connect=True), 
@@ -48,6 +47,10 @@ class AutoVoiceChannel(commands.Cog):
 
     @app_commands.command(name="get_voice", description="Xem kênh voice đặc biệt hiện tại.")
     async def get_voice(self, interaction: discord.Interaction):
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này.", ephemeral=True)
+            return
+        
         if self.trigger_channel_id:
             guild = interaction.guild
             channel = guild.get_channel(self.trigger_channel_id)
@@ -73,7 +76,7 @@ class AutoVoiceChannel(commands.Cog):
         if not interaction.user.guild_permissions.administrator:
             perms = channel.permissions_for(interaction.user)
             if not perms.manage_channels:
-                await interaction.response.send_message("Bạn không có quyền thay đổi giới hạn người tham gia trong kênh voice này.", ephemeral=True)
+                await interaction.response.send_message("Bạn không có quyền thay đổi tên kênh voice này", ephemeral=True)
                 return
 
         try:
