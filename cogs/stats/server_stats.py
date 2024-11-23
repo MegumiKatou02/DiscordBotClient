@@ -6,11 +6,11 @@ class ServerStats(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="server_stats", description="Xem thống kê thành viên trong server.")
+    @app_commands.command(name="server_stats", description="Xem thống kê thành viên trong server")
     async def server_stats(self, interaction: discord.Interaction):
         guild = interaction.guild
         if not guild:
-            await interaction.response.send_message("Không thể lấy thông tin từ server này.", ephemeral=True)
+            await interaction.response.send_message("Không thể lấy thông tin từ server này", ephemeral=True)
             return
 
         total_members = guild.member_count
