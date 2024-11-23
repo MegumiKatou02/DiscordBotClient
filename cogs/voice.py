@@ -40,6 +40,10 @@ class AutoVoiceChannel(commands.Cog):
 
     @app_commands.command(name="set_voice", description="Đặt kênh voice đặc biệt để tạo kênh tự động.")
     async def set_voice(self, interaction: discord.Interaction, channel: discord.VoiceChannel):
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này.", ephemeral=True)
+            return
+
         self.trigger_channel_id = channel.id
         await interaction.response.send_message(
             f"Kênh voice `{channel.name}` đã được đặt làm kênh đặc biệt.", ephemeral=True
