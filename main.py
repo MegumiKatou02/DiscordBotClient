@@ -18,6 +18,7 @@ intents = discord.Intents.default()
 intents.message_content = True 
 intents.members = True
 intents.guilds = True
+intents.presences = True
 
 clients = commands.Bot(command_prefix='>>', intents=intents)
 
@@ -49,6 +50,7 @@ async def load_cogs():
     await clients.load_extension("cogs.avatar")
     await clients.load_extension("cogs.notification")
     await clients.load_extension("cogs.voice")
+    await clients.load_extension("cogs.stats")
     
 #goodbye
 @clients.tree.command()
