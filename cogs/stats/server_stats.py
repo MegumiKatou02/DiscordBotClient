@@ -25,7 +25,7 @@ class ServerStats(commands.Cog):
 
         embed = discord.Embed(
             title=f"Thống Kê Server: {guild.name}",
-            color=0x67ff4f
+            color=0xff0033 # 0x67ff4f
         )
         embed.add_field(name="Tổng số thành viên", value=total_members, inline=False)
         embed.add_field(name="Số thành viên (người)", value=total_users, inline=True)
