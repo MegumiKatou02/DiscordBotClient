@@ -22,4 +22,4 @@ async def anime_command(interaction: discord.Interaction, anime_name: str):
         embed.set_image(url=image_url)
         await interaction.response.send_message(embed=embed)
     else:
-        await interaction.response.send_message("Không tìm thấy hình ảnh anime với tên này.", ephemeral=True)
+        await interaction.response.send_message("Không tìm thấy hình ảnh anime với tên này", ephemeral=True)
