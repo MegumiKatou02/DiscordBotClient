@@ -22,7 +22,6 @@ class AutoVoiceChannel(commands.Cog):
                 category=after.channel.category,
                 overwrites={
                     guild.default_role: discord.PermissionOverwrite(connect=True),  
-                    # member: discord.PermissionOverwrite(connect=True), 
                 },
                 reason=f"Kênh được tạo tự động cho {member.name}"
             )
