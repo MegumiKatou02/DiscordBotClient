@@ -41,7 +41,6 @@ async def on_ready():
     for guild in clients.guilds:
         print(f' - {guild.name} (ID: {guild.id})')
 
-
 #load file cogs
 async def load_cogs():
     await clients.load_extension("cogs.send_dev")
@@ -184,7 +183,7 @@ async def recent_members(interaction: discord.Interaction):
     recent_members = sorted_members[:10]
 
     if not recent_members:
-        await interaction.response.send_message("Không có thành viên nào trong server.", ephemeral=True)
+        await interaction.response.send_message("Không có thành viên nào trong server", ephemeral=True)
         return
 
     member_info = []

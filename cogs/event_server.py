@@ -14,7 +14,6 @@ class EventServer(commands.Cog):
         self.check_events_end.start()
 
     def init_database(self):
-        """Khởi tạo cơ sở dữ liệu SQLite."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("""
@@ -42,7 +41,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def save_event(self, server_id, event_code, name, topic, end_time, creator_id, creator_name):
-        """Lưu sự kiện vào cơ sở dữ liệu."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("""
@@ -53,7 +51,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def delete_event(self, server_id, event_code):
-        """Xóa sự kiện khỏi cơ sở dữ liệu."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("DELETE FROM events WHERE server_id = ? AND event_code = ?", (server_id, event_code))
@@ -62,7 +59,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def add_participant(self, server_id, event_code, user_id, user_name):
-        """Thêm người tham gia vào sự kiện."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("""
@@ -73,7 +69,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def remove_participant(self, server_id, event_code, user_id):
-        """Xóa người tham gia khỏi sự kiện."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("""
@@ -84,7 +79,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def get_events(self, server_id):
-        """Lấy danh sách sự kiện từ cơ sở dữ liệu."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM events WHERE server_id = ?", (server_id,))
@@ -94,7 +88,6 @@ class EventServer(commands.Cog):
     
     @tasks.loop(minutes=1)
     async def check_events_end(self):
-        """Kiểm tra và xóa các sự kiện đã kết thúc."""
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute("SELECT server_id, event_code, end_time FROM events")
@@ -109,7 +102,6 @@ class EventServer(commands.Cog):
         conn.close()
 
     def parse_duration(self, duration: str):
-        """Chuyển đổi chuỗi như '3d2h' thành đối tượng timedelta."""
         days, hours, minutes = 0, 0, 0
 
         days_match = re.search(r'(\d+)d', duration)
@@ -128,7 +120,6 @@ class EventServer(commands.Cog):
 
     @app_commands.command(name="event", description="Tạo sự kiện với mã sự kiện, tên, chủ đề và thời gian kết thúc")
     async def event(self, interaction: discord.Interaction, event_code: str, name: str, topic: str, duration: str):
-        """Tạo một sự kiện mới với mã sự kiện, tên, chủ đề và thời gian kết thúc."""
         topic = topic.replace("\\n", "\n")
         try:
             duration_obj = self.parse_duration(duration)
