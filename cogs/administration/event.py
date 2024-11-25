@@ -1,10 +1,7 @@
 import discord
 import sqlite3
 from discord import app_commands
-from discord.ext import commands, tasks
-from discord.ui import Button, View
-from datetime import datetime, timedelta
-import re
+from discord.ext import commands
 
 class Event(commands.Cog):
     def __init__(self, bot):
