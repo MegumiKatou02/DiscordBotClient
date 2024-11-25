@@ -51,6 +51,7 @@ async def load_cogs():
     await clients.load_extension("cogs.voice")
     await clients.load_extension("cogs.stats.server_stats")
     await clients.load_extension("cogs.stats.bot_stats")
+    await clients.load_extension("cogs.administration.event")
     
 #goodbye
 @clients.tree.command()
