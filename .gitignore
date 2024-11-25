@@ -1,9 +1,5 @@
 config.py
 
-# events.db
-
-# notifications.db
-
 .env
 
 __pycache__/
