@@ -3,11 +3,14 @@ import sqlite3
 from discord import app_commands
 from discord.ext import commands
 
+import config
+
 class Event(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db_file = "database/events.db"
         self.init_database()
+        self.allowed_user_id = config.USER_ID
 
     def init_database(self):
         conn = sqlite3.connect(self.db_file)
@@ -51,6 +54,10 @@ class Event(commands.Cog):
 
     @app_commands.command(name="event_counts", description="Hiển thị số lượng sự kiện trong từng server")
     async def event_counts(self, interaction: discord.Interaction):
+        if interaction.user.id != self.allowed_user_id:
+            await interaction.response.send_message("Chỉ nhà phát triển mới dùng được lệnh này", ephemeral=True)
+            return
+
         results = self.get_event_count_per_server()
 
         if not results:
