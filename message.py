@@ -1,6 +1,10 @@
+### This file can be customized to your liking <(")
+
 import asyncio
 import random
 import re
+
+import discord
 
 greetings = ['chào', 'hello', 'hi', 'yo']
 
@@ -31,6 +35,29 @@ async def on_message_event(message, bot):
 
     if not message.author.bot and re.search(r'\bchinh beo\b$', message.content.lower()):
         await message.channel.send('Co m bel ay')
+
+    if not message.author.bot and message.content.lower() == "o o":
+        emojis = ["🐣", "🐔"]
+        try:
+            for emoji in emojis:
+                if emoji:
+                    await message.add_reaction(emoji)
+        except discord.HTTPException as e:
+            print(f"Không thể thêm reaction: {e}")
+
+    if not message.author.bot and re.search(r'\ban co\b$', message.content.lower()):
+        emoji = random.choice(["🐂", "🐄"])
+        try:
+            await message.add_reaction(emoji)
+        except discord.HTTPException as e:
+            print(f"Không thể thêm reaction: {e}")
+
+    if not message.author.bot and re.search(r'\băn cỏ\b$', message.content.lower()):
+        emoji = random.choice(["🐂", "🐄"])
+        try:
+            await message.add_reaction(emoji)
+        except discord.HTTPException as e:
+            print(f"Không thể thêm reaction: {e}")
 
     if bot.user.mentioned_in(message) and not message.author.bot:
         hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
