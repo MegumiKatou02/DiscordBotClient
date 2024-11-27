@@ -38,7 +38,7 @@ async def on_message_event(message, bot):
             await message.channel.send('Co m bel ay')
 
         if message.content.lower() == "o o":
-            emojis = ["🐣", "🐔"]
+            emojis = ["🐔", "⁉️"] #"🐣",
             try:
                 for emoji in emojis:
                     if emoji:
