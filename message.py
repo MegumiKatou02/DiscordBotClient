@@ -17,53 +17,54 @@ async def on_message_event(message, bot):
         f"Hey {message.author.name}, có gì vui không? 🤗"
     ]
     
-    if any(re.fullmatch(r'\b' + greeting + r'\b', message.content.lower()) for greeting in greetings) and not message.author.bot:
-        response = random.choice(responses) 
-        await message.channel.send(response)
+    if not message.author.bot:
+        if any(re.fullmatch(r'\b' + greeting + r'\b', message.content.lower()) for greeting in greetings):
+            response = random.choice(responses) 
+            await message.channel.send(response)
 
-    if not message.author.bot and re.search(r'\bbel bel nga sap duong\b$', message.content.lower()):
-        await message.channel.send('Co m nga ay')
+        if re.search(r'\bbel bel nga sap duong\b$', message.content.lower()):
+            await message.channel.send('Co m nga ay')
 
-    if not message.author.bot and re.search(r'\bchinh bel\b$', message.content.lower()):
-        await message.channel.send('Co m bel ay')
+        if re.search(r'\bchinh bel\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
 
-    if not message.author.bot and re.search(r'\bching bel\b$', message.content.lower()):
-        await message.channel.send('Co m bel ay')
+        if re.search(r'\bching bel\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
 
-    if not message.author.bot and re.search(r'\bching beo\b$', message.content.lower()):
-        await message.channel.send('Co m bel ay')
+        if re.search(r'\bching beo\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
 
-    if not message.author.bot and re.search(r'\bchinh beo\b$', message.content.lower()):
-        await message.channel.send('Co m bel ay')
+        if re.search(r'\bchinh beo\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
 
-    if not message.author.bot and message.content.lower() == "o o":
-        emojis = ["🐣", "🐔"]
-        try:
-            for emoji in emojis:
-                if emoji:
-                    await message.add_reaction(emoji)
-        except discord.HTTPException as e:
-            print(f"Không thể thêm reaction: {e}")
+        if message.content.lower() == "o o":
+            emojis = ["🐣", "🐔"]
+            try:
+                for emoji in emojis:
+                    if emoji:
+                        await message.add_reaction(emoji)
+            except discord.HTTPException as e:
+                print(f"Không thể thêm reaction: {e}")
 
-    if not message.author.bot and re.search(r'\ban co\b$', message.content.lower()):
-        emoji = random.choice(["🐂", "🐄"])
-        try:
-            await message.add_reaction(emoji)
-        except discord.HTTPException as e:
-            print(f"Không thể thêm reaction: {e}")
+        if re.search(r'\ban co\b$', message.content.lower()):
+            emoji = random.choice(["🐂", "🐄"])
+            try:
+                await message.add_reaction(emoji)
+            except discord.HTTPException as e:
+                print(f"Không thể thêm reaction: {e}")
 
-    if not message.author.bot and re.search(r'\băn cỏ\b$', message.content.lower()):
-        emoji = random.choice(["🐂", "🐄"])
-        try:
-            await message.add_reaction(emoji)
-        except discord.HTTPException as e:
-            print(f"Không thể thêm reaction: {e}")
+        if re.search(r'\băn cỏ\b$', message.content.lower()):
+            emoji = random.choice(["🐂", "🐄"])
+            try:
+                await message.add_reaction(emoji)
+            except discord.HTTPException as e:
+                print(f"Không thể thêm reaction: {e}")
 
-    if bot.user.mentioned_in(message) and not message.author.bot:
-        hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
+        if bot.user.mentioned_in(message):
+            hello_message = await message.channel.send("Nhấn `/help` để biết thêm thông tin !")
 
-        await asyncio.sleep(3)
-        
-        await hello_message.delete()
+            await asyncio.sleep(3)
+            
+            await hello_message.delete()
 
     await bot.process_commands(message)
