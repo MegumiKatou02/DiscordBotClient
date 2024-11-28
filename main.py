@@ -175,7 +175,7 @@ async def reminder(interaction: discord.Interaction, time: str, *, message: str)
 @clients.tree.command(description="Danh sách các thành viên đã tham gia gần đây")
 async def recent_members(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.administrator:
-        await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này.", ephemeral=True)
+        await interaction.response.send_message("Bạn không có quyền sử dụng lệnh này", ephemeral=True)
         return
 
     guild = interaction.guild
