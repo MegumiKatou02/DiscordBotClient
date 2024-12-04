@@ -37,6 +37,12 @@ async def on_message_event(message, bot):
         if re.search(r'\bchinh beo\b$', message.content.lower()):
             await message.channel.send('Co m bel ay')
 
+        if re.search(r'\bchinh beI\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
+
+        if re.search(r'\bching beI\b$', message.content.lower()):
+            await message.channel.send('Co m bel ay')
+
         if message.content.lower() == "o o":
             emojis = ["🐔", "⁉️"] #"🐣",
             try:
