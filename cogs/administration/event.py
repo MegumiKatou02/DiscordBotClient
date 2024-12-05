@@ -51,7 +51,6 @@ class Event(commands.Cog):
         conn.close()
         return results
 
-
     @app_commands.command(name="event_counts", description="Hiển thị số lượng sự kiện trong từng server")
     async def event_counts(self, interaction: discord.Interaction):
         if interaction.user.id != self.allowed_user_id:
