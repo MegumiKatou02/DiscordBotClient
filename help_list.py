@@ -23,6 +23,7 @@ async def send_help_message(interaction: discord.Interaction):
     **/channel_rename**
     **/server_stats**
     **/bot_stats**
+    **/delete_messenger**
     1. Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
     2. Truy cập **/notification** để cập nhật thông báo hay quy định mới !
     """
