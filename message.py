@@ -3,7 +3,6 @@
 import asyncio
 import random
 import re
-
 import discord
 
 greetings = ['chào', 'hello', 'hi', 'yo']
