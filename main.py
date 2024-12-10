@@ -13,6 +13,11 @@ import config
 import game
 import help_list
 import Weather
+from pypresence import Presence
+
+import setup_bot
+
+CLIENT_ID = setup_bot.CLIENT_ID
 
 intents = discord.Intents.default()  
 intents.message_content = True 
@@ -28,7 +33,19 @@ async def on_ready():
     print("----------")
 
     game = discord.Game("Khu Wibu")
-    await clients.change_presence(activity=game)
+   
+    activity = discord.Activity(
+        type=discord.ActivityType.playing,
+        name="Khu Wibu",
+        details="Playing in the Misty Woods",
+        assets={
+            'large_image': 'catlove',
+            'large_text': 'Playing in the Misty Woods',
+            'small_image': 'https://i.pinimg.com/736x/3f/8d/86/3f8d868caa3b401449d4ca027b738031.jpg',
+            'small_text': 'Example User'
+        }
+    )
+    await clients.change_presence(activity=activity)
 
     # load corgs
     await load_cogs()
