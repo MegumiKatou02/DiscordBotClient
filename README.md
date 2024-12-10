@@ -42,6 +42,7 @@ Create a `requirements.txt` file and paste the following lines into it <br>
     tabulate==0.9.0 
     typing_extensions==4.12.2 
     psutil==6.1.0
+    pypresence==4.3.0
 Install the packages from this file using the following command in the terminal:<br>
 - `pip install -r requirements.txt` <br>
 
