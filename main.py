@@ -65,6 +65,7 @@ async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
     await clients.load_extension("cogs.avatar")
     await clients.load_extension("cogs.emoji_image")
+    await clients.load_extension("cogs.steal_emoji")
     await clients.load_extension("cogs.notification")
     await clients.load_extension("cogs.voice")
     await clients.load_extension("cogs.stats.server_stats")
