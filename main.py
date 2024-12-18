@@ -60,21 +60,24 @@ async def on_ready():
 
 #load file cogs
 async def load_cogs():
-    await clients.load_extension("cogs.send_dev")
-    await clients.load_extension("cogs.event_server")
     await clients.load_extension("cogs.query.send_GIF")
-    await clients.load_extension("cogs.avatar")
 
     await clients.load_extension("cogs.emoji.emoji_image")
     await clients.load_extension("cogs.emoji.steal_emoji")
 
     await clients.load_extension("cogs.notification")
     await clients.load_extension("cogs.voice")
+    
     await clients.load_extension("cogs.stats.server_stats")
     await clients.load_extension("cogs.stats.bot_stats")
+
     await clients.load_extension("cogs.administration.event")
     await clients.load_extension("cogs.administration.notification")
+
     await clients.load_extension("cogs.delete_mess")
+    await clients.load_extension("cogs.avatar")
+    await clients.load_extension("cogs.send_dev")
+    await clients.load_extension("cogs.event_server")
     
 #goodbye
 @clients.tree.command()
