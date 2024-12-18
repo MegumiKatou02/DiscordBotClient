@@ -64,6 +64,7 @@ async def load_cogs():
     await clients.load_extension("cogs.event_server")
     await clients.load_extension("cogs.query.send_GIF")
     await clients.load_extension("cogs.avatar")
+    await clients.load_extension("cogs.emoji_image")
     await clients.load_extension("cogs.notification")
     await clients.load_extension("cogs.voice")
     await clients.load_extension("cogs.stats.server_stats")
@@ -251,4 +252,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN)
+clients.run(config.TOKEN_TEST_BOT)
