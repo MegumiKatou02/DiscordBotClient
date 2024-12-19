@@ -73,6 +73,7 @@ async def load_cogs():
 
     await clients.load_extension("cogs.administration.event")
     await clients.load_extension("cogs.administration.notification")
+    await clients.load_extension("cogs.administration.lock")
 
     await clients.load_extension("cogs.delete_mess")
     await clients.load_extension("cogs.avatar")
