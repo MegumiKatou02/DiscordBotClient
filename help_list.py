@@ -26,6 +26,8 @@ async def send_help_message(interaction: discord.Interaction):
     **/delete_messenger**
     **/emoji_image**
     **/steal_emoji (administrator)*
+    **/lock (administrator)**
+    **/userinfo**
     1. Nếu có vấn đề hoặc bot có lỗi xin liên hệ bằng **/send_dev**
     2. Truy cập **/notification** để cập nhật thông báo hay quy định mới !
     """

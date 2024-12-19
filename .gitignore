@@ -2,6 +2,8 @@ config.py
 
 .env
 
+individual/message.py
+
 __pycache__/
 
 *.log
