@@ -58,6 +58,34 @@ async def on_ready():
     for guild in clients.guilds:
         print(f' - {guild.name} (ID: {guild.id})')
 
+    for guild in clients.guilds:
+        owner = guild.owner
+        if owner:
+            try:
+                embed = discord.Embed(
+                    title=f"📢 Thông báo từ {guild.name}",
+                    description=(
+                        f"**Tiếng Việt:**\n"
+                        f"Chào bạn **{owner.name}** từ **{guild.name}**, cảm ơn bạn đã mời bot của chúng tôi vào server của bạn.\n"
+                        f"Liệu bạn có thể cho chúng tôi biết server của bạn dùng ngôn ngữ gì không?\n"
+                        f"Chúng tôi sẽ thiết lập ngôn ngữ cho bot của mình dựa trên ngôn ngữ mà server của bạn sử dụng.\n"
+                        f"Nếu được xin hãy dùng lệnh `/send_dev`. Hãy gửi theo cú pháp `/send_dev [ngôn ngữ] [tên server của bạn]`.\n\n"
+                        f"**English:**\n"
+                        f"Hello **{owner.name}** from **{guild.name}**, thank you for inviting our bot to your server.\n"
+                        f"Could you please let us know what language your server primarily uses?\n"
+                        f"We will configure the bot's language based on your server's preferred language.\n"
+                        f"If possible, please use the command `/send_dev`. Send it in the format: `/send_dev [language] [your server's name]`."
+                    ),
+                    color=discord.Color.blue()
+                )
+                embed.set_footer(text="Cảm ơn bạn đã sử dụng bot của chúng tôi! | Thank you for using our bot!")
+
+                await owner.send(embed=embed)
+            except discord.Forbidden:
+                print(f"Không thể nhắn tin cho owner của server: {guild.name} (ID: {guild.id}) do họ đã tắt tin nhắn trực tiếp.")
+    print("Đã gửi tin nhắn cho tất cả chủ sở hữu server.")
+
+
 #load file cogs
 async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
@@ -261,4 +289,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN_TEST_BOT)
+clients.run(config.TOKEN)
