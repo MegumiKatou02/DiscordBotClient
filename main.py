@@ -62,6 +62,8 @@ async def on_ready():
 async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
 
+    await clients.load_extension("cogs.user.userInfo")
+
     await clients.load_extension("cogs.emoji.emoji_image")
     await clients.load_extension("cogs.emoji.steal_emoji")
 
