@@ -1,4 +1,4 @@
-﻿# Khu Wibu Bot Discord
+﻿# Discord Bot Client
 
 *This is my first time writing code to build a Discord bot, so I have no experience* :3
    
