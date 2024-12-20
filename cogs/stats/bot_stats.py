@@ -31,7 +31,7 @@ class BotStats(commands.Cog):
 
         version_bot = setup_bot.VERSION
 
-        embed = discord.Embed(title=f"Thông tin bot: {bot_name}", color=0xff0033)
+        embed = discord.Embed(title=f"Thông tin bot: {bot_name}", color=0xFFFFFF)
         embed.set_thumbnail(url=bot_avatar)
         embed.add_field(name="Phiên bản", value=version_bot, inline=False)
         embed.add_field(name="Số lượng server", value=guild_count, inline=False)
