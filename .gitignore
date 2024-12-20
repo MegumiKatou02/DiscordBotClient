@@ -4,6 +4,9 @@ config.py
 
 individual/message.py
 
+template/bot.json
+template/api.json
+
 __pycache__/
 
 *.log

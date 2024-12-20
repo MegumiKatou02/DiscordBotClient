@@ -18,6 +18,7 @@ from pypresence import Presence
 import setup_bot
 import individual
 import json
+import template
 
 CLIENT_ID = setup_bot.CLIENT_ID
 
@@ -29,17 +30,18 @@ intents.presences = True
 
 clients = commands.Bot(command_prefix='>>', intents=intents)
 
-config_bot = "individual/bot.json"
+config_bot = "template/bot.json"
 
 @clients.event
 async def on_ready():
     print("ready !!!")
     print("----------")
 
-    with open("individual/bot.json", "r", encoding="utf-8") as f:
+    with open("template/bot.json", "r", encoding="utf-8") as f:
         config_bot = json.load(f)
-    state = config_bot["Haiku_team"]["states"]
-    game = discord.Game("Khu Wibu")
+    state = config_bot["state"]
+    
+    # game = discord.Game("Khu Wibu")
    
     activity = discord.Activity(
         type=discord.ActivityType.playing,
@@ -269,4 +271,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN_HAIKU) # **/ignore
+clients.run(config.TOKEN_TEST_BOT) # **/ignore
