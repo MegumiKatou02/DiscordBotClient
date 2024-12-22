@@ -1,6 +1,6 @@
-from Util.jsonLoad import JsonLoad
+from Util.json_handle import JsonHandler
 
-data = JsonLoad("template/bot.json")
+data = JsonHandler("template/bot.json", "load")
 
 VERSION = data["version"];
 CLIENT_ID = data["client_id"];
