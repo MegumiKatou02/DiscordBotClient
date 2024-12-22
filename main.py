@@ -10,7 +10,6 @@ import psutil
 from message import on_message_event
 import config
 import help_list
-import Weather
 from pypresence import Presence
 
 import setup_bot
@@ -70,6 +69,7 @@ async def on_ready():
 async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
     await clients.load_extension("cogs.query.anime_image")
+    await clients.load_extension("cogs.query.weather")
 
     await clients.load_extension("cogs.user.userInfo")
 
@@ -234,11 +234,6 @@ async def recent_members(interaction: discord.Interaction):
     )
 
     await interaction.response.send_message(embed=embed)
-
-#weather
-@clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
-async def weather(interaction: discord.Interaction, city_name: str):
-    await Weather.weather_command(interaction, city_name)
 
 #math
 @clients.tree.command(name="math", description="Tính toán biểu thức toán học")
