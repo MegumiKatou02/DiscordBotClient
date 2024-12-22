@@ -9,7 +9,6 @@ import psutil
 
 from message import on_message_event
 import config
-import help_list
 from pypresence import Presence
 
 import setup_bot
@@ -69,6 +68,8 @@ async def on_ready():
 async def load_cogs():
     await clients.load_extension("cogs.extension.extension")
 
+    await clients.load_extension("cogs.help.help_list")
+
     await clients.load_extension("cogs.query.send_GIF")
     await clients.load_extension("cogs.query.anime_image")
     await clients.load_extension("cogs.query.weather")
@@ -102,11 +103,6 @@ async def load_cogs():
 @clients.event
 async def on_message(message):
     await on_message_event(message, clients)
-
-#help
-@clients.tree.command(description="Help and show commands")
-async def help(interaction: discord.Interaction):
-    await help_list.send_help_message(interaction)
 
 #run
 @clients.command()
