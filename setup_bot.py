@@ -1,2 +1,6 @@
-VERSION = '1.2.10'
-CLIENT_ID = '1307581043288571914'
+from Util.jsonLoad import JsonLoad
+
+data = JsonLoad("template/bot.json")
+
+VERSION = data["version"];
+CLIENT_ID = data["client_id"];
