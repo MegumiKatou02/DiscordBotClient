@@ -3,7 +3,7 @@ from discord.ext import commands
 import psutil
 import config
 import setup_bot
-import json
+from Util.jsonLoad import JsonLoad
 
 CLIENT_ID = setup_bot.CLIENT_ID
 
@@ -15,29 +15,18 @@ intents.presences = True
 
 clients = commands.Bot(command_prefix='>>', intents=intents)
 
-config_bot = "template/bot.json"
+data = JsonLoad("template/bot.json")
 
 @clients.event
 async def on_ready():
     print("ready !!!")
     print("----------")
 
-    with open("template/bot.json", "r", encoding="utf-8") as f:
-        config_bot = json.load(f)
-    state = config_bot["state"]
+    state = data["state"]
     
-    # game = discord.Game("Khu Wibu")
-   
     activity = discord.Activity(
         type=discord.ActivityType.playing,
-        name= state,
-        details="Playing in the Misty Woods",
-        assets={
-            'large_image': 'catlove',
-            'large_text': 'Playing in the Misty Woods',
-            'small_image': 'https://i.pinimg.com/736x/3f/8d/86/3f8d868caa3b401449d4ca027b738031.jpg',
-            'small_text': 'Example User'
-        }
+        name= state
     )
     await clients.change_presence(activity=activity)
 
