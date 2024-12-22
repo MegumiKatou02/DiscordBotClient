@@ -7,7 +7,6 @@ from discord.ext import commands
 import sympy as sp
 import psutil
 
-import Anime
 from message import on_message_event
 import config
 import help_list
@@ -70,6 +69,7 @@ async def on_ready():
 #load file cogs
 async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
+    await clients.load_extension("cogs.query.anime_image")
 
     await clients.load_extension("cogs.user.userInfo")
 
@@ -239,11 +239,6 @@ async def recent_members(interaction: discord.Interaction):
 @clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
 async def weather(interaction: discord.Interaction, city_name: str):
     await Weather.weather_command(interaction, city_name)
-
-#anime
-@clients.tree.command(name="anime", description="Tìm kiếm hình ảnh anime theo tên")
-async def anime(interaction: discord.Interaction, name: str):
-    await Anime.anime_command(interaction, name)
 
 #math
 @clients.tree.command(name="math", description="Tính toán biểu thức toán học")
