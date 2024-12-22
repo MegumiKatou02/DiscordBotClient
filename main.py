@@ -7,12 +7,9 @@ from discord.ext import commands
 import sympy as sp
 import psutil
 
-import Anime
 from message import on_message_event
 import config
-import game
 import help_list
-import Weather
 from pypresence import Presence
 
 import setup_bot
@@ -71,6 +68,10 @@ async def on_ready():
 #load file cogs
 async def load_cogs():
     await clients.load_extension("cogs.query.send_GIF")
+    await clients.load_extension("cogs.query.anime_image")
+    await clients.load_extension("cogs.query.weather")
+
+    await clients.load_extension("cogs.server.server")
 
     await clients.load_extension("cogs.user.userInfo")
 
@@ -91,6 +92,8 @@ async def load_cogs():
     await clients.load_extension("cogs.avatar")
     await clients.load_extension("cogs.send_dev")
     await clients.load_extension("cogs.event_server")
+
+    await clients.load_extension("cogs.game.roll")
     
 #goodbye
 @clients.tree.command()
@@ -104,37 +107,10 @@ async def say(interaction: discord.Interaction, *, message: str):
     await interaction.channel.purge(limit=1, check=lambda msg: msg.author == interaction.user)
     await interaction.channel.send(message)
 
-#roll
-@clients.tree.command(name = 'roll', description="Random số")
-async def roll_command(interaction: discord.Interaction, min_value: int = 0, max_value: int = 1000):
-    await game.roll(interaction, min_value, max_value)
-
 #check prefix //
 @clients.event
 async def on_message(message):
     await on_message_event(message, clients)
-
-#server
-@clients.tree.command(description = "Hiển thị thông tin máy chủ") #
-async def server(interaction: discord.Interaction):
-    guild = interaction.guild
-
-    embed = discord.Embed(title=f"Thông tin về server {guild.name}", color=discord.Color.blue())
-
-    if guild.icon:
-        embed.set_thumbnail(url=guild.icon.url)
-    else:
-        embed.add_field(name="Icon Server", value='Không có icon', inline=False)
-    embed.add_field(name="Tên Server", value=guild.name, inline=False)
-    embed.add_field(name="ID Server", value=guild.id, inline=False)
-    embed.add_field(name="Ngày tạo", value=guild.created_at.strftime('%d-%m-%Y %H:%M:%S'), inline=False)
-    embed.add_field(name="Số Thành Viên", value=guild.member_count, inline=False)
-    embed.add_field(name="Số Kênh", value=len(guild.channels), inline=False)
-
-    owner = guild.owner
-    embed.add_field(name="Server Owner", value=owner.mention, inline=False)
-
-    await interaction.response.send_message(embed=embed)
 
 #help
 @clients.tree.command(description="Help and show commands")
@@ -238,16 +214,6 @@ async def recent_members(interaction: discord.Interaction):
     )
 
     await interaction.response.send_message(embed=embed)
-
-#weather
-@clients.tree.command(description="Kiểm tra thời tiết tại một thành phố")
-async def weather(interaction: discord.Interaction, city_name: str):
-    await Weather.weather_command(interaction, city_name)
-
-#anime
-@clients.tree.command(name="anime", description="Tìm kiếm hình ảnh anime theo tên")
-async def anime(interaction: discord.Interaction, name: str):
-    await Anime.anime_command(interaction, name)
 
 #math
 @clients.tree.command(name="math", description="Tính toán biểu thức toán học")
