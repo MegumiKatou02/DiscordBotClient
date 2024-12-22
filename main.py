@@ -99,10 +99,7 @@ async def load_cogs():
 
     await clients.load_extension("cogs.game.roll")
 
-#check prefix //
-@clients.event
-async def on_message(message):
-    await on_message_event(message, clients)
+    await clients.load_extension("cogs.message.on_message")
 
 #run
 @clients.command()
