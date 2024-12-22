@@ -10,7 +10,6 @@ import psutil
 import Anime
 from message import on_message_event
 import config
-import game
 import help_list
 import Weather
 from pypresence import Presence
@@ -91,6 +90,8 @@ async def load_cogs():
     await clients.load_extension("cogs.avatar")
     await clients.load_extension("cogs.send_dev")
     await clients.load_extension("cogs.event_server")
+
+    await clients.load_extension("cogs.game.roll")
     
 #goodbye
 @clients.tree.command()
@@ -103,11 +104,6 @@ async def say(interaction: discord.Interaction, *, message: str):
     await interaction.response.send_message("Đang xử lý...", ephemeral=True)
     await interaction.channel.purge(limit=1, check=lambda msg: msg.author == interaction.user)
     await interaction.channel.send(message)
-
-#roll
-@clients.tree.command(name = 'roll', description="Random số")
-async def roll_command(interaction: discord.Interaction, min_value: int = 0, max_value: int = 1000):
-    await game.roll(interaction, min_value, max_value)
 
 #check prefix //
 @clients.event
