@@ -82,6 +82,15 @@ async def load_cogs():
         except Exception as e:
             print(f"Failed to load {cog}: {e}")
     
+
+@clients.event
+async def on_guild_join(guild: discord.Guild):
+    print("--------------------")
+    print(f"Bot đã được thêm vào server: {guild.name} (ID: {guild.id})")
+    print(f"Chủ server: {guild.owner} (ID: {guild.owner_id})")
+    print(f"Số lượng thành viên: {guild.member_count}")
+    print("--------------------")
+
 #run
 @clients.command()
 async def run(ctx):
@@ -94,4 +103,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN_TEST_BOT) # **/ignore
+clients.run(config.TOKEN) # **/ignore
