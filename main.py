@@ -9,7 +9,6 @@ import psutil
 
 from message import on_message_event
 import config
-import help_list
 from pypresence import Presence
 
 import setup_bot
@@ -67,47 +66,40 @@ async def on_ready():
 
 #load file cogs
 async def load_cogs():
-    await clients.load_extension("cogs.extension.extension")
-
-    await clients.load_extension("cogs.query.send_GIF")
-    await clients.load_extension("cogs.query.anime_image")
-    await clients.load_extension("cogs.query.weather")
-
-    await clients.load_extension("cogs.server.server")
-
-    await clients.load_extension("cogs.user.userInfo")
-    await clients.load_extension("cogs.user.recent_members")
+    await clients.load_extension("cogs.administration.delete_mess")
+    await clients.load_extension("cogs.administration.event")
+    await clients.load_extension("cogs.administration.lock")
+    await clients.load_extension("cogs.administration.notification")
+    await clients.load_extension("cogs.administration.voice")
 
     await clients.load_extension("cogs.emoji.emoji_image")
     await clients.load_extension("cogs.emoji.steal_emoji")
 
-    await clients.load_extension("cogs.notification")
-    await clients.load_extension("cogs.voice")
-    
-    await clients.load_extension("cogs.stats.server_stats")
-    await clients.load_extension("cogs.stats.bot_stats")
+    await clients.load_extension("cogs.event.event_server")
 
-    await clients.load_extension("cogs.administration.event")
-    await clients.load_extension("cogs.administration.notification")
-    await clients.load_extension("cogs.administration.lock")
-
-    await clients.load_extension("cogs.delete_mess")
-    await clients.load_extension("cogs.avatar")
-    await clients.load_extension("cogs.send_dev")
-    await clients.load_extension("cogs.event_server")
+    await clients.load_extension("cogs.extension.extension")
+    await clients.load_extension("cogs.extension.notification")
+    await clients.load_extension("cogs.extension.send_dev")
 
     await clients.load_extension("cogs.game.roll")
 
-#check prefix //
-@clients.event
-async def on_message(message):
-    await on_message_event(message, clients)
+    await clients.load_extension("cogs.help.help_list")
 
-#help
-@clients.tree.command(description="Help and show commands")
-async def help(interaction: discord.Interaction):
-    await help_list.send_help_message(interaction)
+    await clients.load_extension("cogs.message.on_message")
 
+    await clients.load_extension("cogs.query.anime_image")
+    await clients.load_extension("cogs.query.send_GIF")
+    await clients.load_extension("cogs.query.weather")
+
+    await clients.load_extension("cogs.server.server")
+
+    await clients.load_extension("cogs.stats.bot_stats")
+    await clients.load_extension("cogs.stats.server_stats")
+
+    await clients.load_extension("cogs.user.avatar")
+    await clients.load_extension("cogs.user.recent_members")
+    await clients.load_extension("cogs.user.userInfo")
+    
 #run
 @clients.command()
 async def run(ctx):
