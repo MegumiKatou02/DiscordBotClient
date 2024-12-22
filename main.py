@@ -1,20 +1,9 @@
-import asyncio
-from datetime import datetime, timedelta
-import random
-import re
 import discord
 from discord.ext import commands
-import sympy as sp
 import psutil
-
-from message import on_message_event
 import config
-from pypresence import Presence
-
 import setup_bot
-import individual
 import json
-import template
 
 CLIENT_ID = setup_bot.CLIENT_ID
 
