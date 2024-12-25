@@ -1,3 +1,13 @@
+#*
+#           Copyright belongs to Yukiookii and Haiku team 2024   
+#
+#           Contribute: https://github.com/MegumiKatou02/DiscordBotClient.git
+#
+#           Email contact: ledinhchinh.dev@gmail.com  
+# 
+#
+#*#
+
 import discord
 from discord.ext import commands
 import psutil
@@ -56,21 +66,31 @@ async def load_cogs():
         "cogs.administration.lock",
         "cogs.administration.notification",
         "cogs.administration.voice",
+
         "cogs.emoji.emoji_image",
         "cogs.emoji.steal_emoji",
+
         "cogs.event.event_server",
+
         "cogs.extension.extension",
         "cogs.extension.notification",
         "cogs.extension.send_dev",
+
         "cogs.game.roll",
+
         "cogs.help.help_list",
+
         "cogs.message.on_message",
+
         "cogs.query.anime_image",
         "cogs.query.send_GIF",
         "cogs.query.weather",
+
         "cogs.server.server",
+
         "cogs.stats.bot_stats",
         "cogs.stats.server_stats",
+        
         "cogs.user.avatar",
         "cogs.user.recent_members",
         "cogs.user.userInfo"
@@ -95,7 +115,7 @@ async def on_guild_join(guild: discord.Guild):
 @clients.command()
 async def run(ctx):
     if not ctx.message.author.bot:
-        await ctx.send("Khu Wibu bot discord is running")
+        await ctx.send(f"{data["name"]} bot discord is running")
 
 @clients.tree.command(description="log memory usage")
 async def log_memory_usage(interaction: discord.Interaction):
