@@ -3,7 +3,7 @@
 #
 #           Contribute: https://github.com/MegumiKatou02/DiscordBotClient.git
 #
-#           Email contact: ledinhchinh.dev@gmail.com 
+#           Email contact: ledinhchinh.dev@gmail.com  
 # 
 #
 #*#
