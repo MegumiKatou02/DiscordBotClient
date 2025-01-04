@@ -115,7 +115,7 @@ async def on_guild_join(guild: discord.Guild):
 @clients.command()
 async def run(ctx):
     if not ctx.message.author.bot:
-        await ctx.send(f"{data["name"]} bot discord is running")
+        await ctx.send("{} bot discord is running".format(data["name"]))
 
 @clients.tree.command(description="log memory usage")
 async def log_memory_usage(interaction: discord.Interaction):

@@ -3,12 +3,47 @@ import random
 import re
 import discord
 from discord.ext import commands
+from fuzzywuzzy import fuzz
+from itertools import permutations
 
 greetings = ['chào', 'hello', 'hi', 'yo']
 
 class OnMessage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    def is_similar(self, input_text, target_text, threshold=70):
+
+        return fuzz.ratio(input_text.lower(), target_text.lower()) >= threshold
+
+    # def is_variant_of_chinh_bel(self, input_text):
+
+    #     pattern = re.compile(r'\b(?:chinh|ching|chInh|chIng)\s*(?:bel|beo|beI)\b', re.IGNORECASE)
+    #     return bool(pattern.search(input_text))
+
+    def generate_permutations(self, phrase):
+
+        words = phrase.split()
+        perms = [" ".join(p) for p in permutations(words)]
+        return perms
+
+    def is_variant_of_chinh_bel(self, input_text):
+        base_phrases = ["chinh bel", "chinh beo", "chinh béo", "chinh bai veo", "chinh bái vẻo",
+                        "chinh bel@L", "chinh be<@!707188474012500028>", "chinh be<@!1111129182110486598>"]
+        
+        target_texts = []
+        for phrase in base_phrases:
+            target_texts.extend(self.generate_permutations(phrase))
+        
+        special_cases = ["chb", "chinhb", "chinh b"]
+        target_texts.extend(special_cases)
+        
+        for target_text in target_texts:
+            if fuzz.ratio(input_text.lower(), target_text.lower()) >= 70:
+                return True
+
+        pattern = re.compile(r'\b(?:chinh|ching|chInh|chIng|chink|chin)\s*(?:bel|beo|béo|beI|bai veo|bái vẻo|bai|vẻo)\b', re.IGNORECASE)
+        return bool(pattern.search(input_text))
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -27,31 +62,10 @@ class OnMessage(commands.Cog):
             response = random.choice(responses)
             await message.channel.send(response)
 
-        if re.search(r'\bbel bel nga sap duong\b$', message.content.lower()):
+        if self.is_similar(message.content.lower(), "Chinh bel bel nga sap duong"):
             await message.channel.send('Co m nga ay')
 
-        if re.search(r'\bchinh bel\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bching bel\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bching beo\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bchinh beo\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bchinh beI\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bching beI\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bChing beI\b$', message.content.lower()):
-            await message.channel.send('Co m bel ay')
-
-        if re.search(r'\bChinh beI\b$', message.content.lower()):
+        if self.is_variant_of_chinh_bel(message.content.lower()):
             await message.channel.send('Co m bel ay')
 
         if message.content.lower() == "o o":
@@ -63,14 +77,7 @@ class OnMessage(commands.Cog):
             except discord.HTTPException as e:
                 print(f"Không thể thêm reaction: {e}")
 
-        if re.search(r'\ban co\b$', message.content.lower()):
-            emoji = random.choice(["🐂", "🐄"])
-            try:
-                await message.add_reaction(emoji)
-            except discord.HTTPException as e:
-                print(f"Không thể thêm reaction: {e}")
-
-        if re.search(r'\băn cỏ\b$', message.content.lower()):
+        if re.search(r'\b(?:an co|ăn cỏ)\b$', message.content.lower()):
             emoji = random.choice(["🐂", "🐄"])
             try:
                 await message.add_reaction(emoji)
