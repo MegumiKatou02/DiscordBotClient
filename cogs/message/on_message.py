@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 from fuzzywuzzy import fuzz
 from itertools import permutations
+import requests
+import config
 
 greetings = ['chào', 'hello', 'hi', 'yo']
 
@@ -13,13 +15,7 @@ class OnMessage(commands.Cog):
         self.bot = bot
 
     def is_similar(self, input_text, target_text, threshold=70):
-
         return fuzz.ratio(input_text.lower(), target_text.lower()) >= threshold
-
-    # def is_variant_of_chinh_bel(self, input_text):
-
-    #     pattern = re.compile(r'\b(?:chinh|ching|chInh|chIng)\s*(?:bel|beo|beI)\b', re.IGNORECASE)
-    #     return bool(pattern.search(input_text))
 
     def generate_permutations(self, phrase):
 
@@ -28,8 +24,11 @@ class OnMessage(commands.Cog):
         return perms
 
     def is_variant_of_chinh_bel(self, input_text):
-        base_phrases = ["chinh bel", "chinh beo", "chinh béo", "chinh bai veo", "chinh bái vẻo",
-                        "chinh bel@L", "chinh be<@!707188474012500028>", "chinh be<@!1111129182110486598>"]
+        base_phrases = [
+            "chinh bel", "chinh beo", "chinh béo", "chinh bai veo", "chinh bái vẻo",
+            "chinh bel@L", "chinh be<@!707188474012500028>", "chinh be<@!1111129182110486598>",
+            "<@!604949724788817920> beo"
+        ]
         
         target_texts = []
         for phrase in base_phrases:
@@ -42,14 +41,49 @@ class OnMessage(commands.Cog):
             if fuzz.ratio(input_text.lower(), target_text.lower()) >= 70:
                 return True
 
-        pattern = re.compile(r'\b(?:chinh|ching|chInh|chIng|chink|chin)\s*(?:bel|beo|béo|beI|bai veo|bái vẻo|bai|vẻo)\b', re.IGNORECASE)
+        pattern = re.compile(
+            r'\b(?:chinh|ching|chInh|chIng|chink|chin)\s+(?:bel|beo|béo|beI|bai veo|bái vẻo|bai|vẻo)\b', 
+            re.IGNORECASE
+        )
         return bool(pattern.search(input_text))
+
+    async def ocr_space(self, url, overlay=False, api_key=config.ORC_SPACE, language='eng'):
+
+        payload = {
+            'url': url,
+            'isOverlayRequired': overlay,
+            'apikey': api_key,
+            'language': language,
+        }
+        response = requests.post(
+            'https://api.ocr.space/parse/image',
+            data=payload,
+        )
+        result = response.json()
+        if result['IsErroredOnProcessing']:
+            print(f"Lỗi từ OCR.space: {result['ErrorMessage']}")
+            return None
+        return result['ParsedResults'][0]['ParsedText']
 
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot:
             return
-        
+
+        if message.attachments:
+            for attachment in message.attachments:
+                if any(attachment.filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp']):
+                    extracted_text = await self.ocr_space(attachment.url)
+                    # print(extracted_text)
+                    if extracted_text:
+                        # await message.channel.send(f"Văn bản trích xuất từ hình ảnh:\n```{extracted_text}```")
+                        if self.is_variant_of_chinh_bel(extracted_text.lower()):
+                            await message.channel.send("Co m beo ay")
+                    else:
+                        # await message.channel.send("Không thể trích xuất văn bản từ hình ảnh.")
+                        print("Không thể trích xuất văn bản từ hình ảnh.")
+                    break
+
         responses = [
             f"Chào bạn, {message.author.name} :3",
             f"Hi {message.author.name}, chúc bạn một ngày tốt lành! 🌞",
