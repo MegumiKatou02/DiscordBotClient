@@ -4,6 +4,8 @@ config.py
 
 individual/message.py
 
+cogs/game/vietnamese_words.json
+
 template/bot.json
 template/api.json
 
