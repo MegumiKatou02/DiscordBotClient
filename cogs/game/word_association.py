@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import json
+import aiohttp
 
 class NoiTu(commands.Cog):
     def __init__(self, bot):
@@ -11,12 +12,31 @@ class NoiTu(commands.Cog):
         self.channel = None 
         self.last_player = None
         self.used_words = set()
+        self.word_cache = {}  
 
-        with open("cogs/game/vietnamese_words.json", "r", encoding="utf-8") as f:
-            self.valid_words = set(item["text"].lower() for item in json.load(f))
+        # with open("cogs/game/vietnamese_words.json", "r", encoding="utf-8") as f:
+        #     self.valid_words = set(item["text"].lower() for item in json.load(f))
 
-    def is_valid_word(self, word):
-        return word.lower() in self.valid_words
+    async def is_valid_word(self, word):
+        if word in self.word_cache:
+            return self.word_cache[word]
+
+        url = f"https://vietnamese-dictionary-api.vercel.app/api/search?word={word}"
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        self.word_cache[word] = data.get("valid", False) 
+
+                        return data.get("valid", False)
+                    else:
+                        print(f"Lỗi khi gọi API: {response.status}")
+                        return False
+        except Exception as e:
+            print(f"Lỗi khi kết nối đến API: {e}")
+            return False
+        # return word.lower() in self.valid_words
 
     @app_commands.command(name="noitu", description="Quản lý trò chơi nối từ")
     @app_commands.describe(action="Hành động (start/end)", channel="Kênh để bắt đầu trò chơi")
@@ -59,7 +79,7 @@ class NoiTu(commands.Cog):
 
         if message.author == self.last_player:
             await message.add_reaction("❌")
-            await message.reply("Không được nối liền kề!", delete_after=5)
+            await message.reply("Không được nối liên tiếp", delete_after=5)
             return
 
         word = message.content.lower().strip()
@@ -69,7 +89,7 @@ class NoiTu(commands.Cog):
             await message.reply(f"Từ **{word}** đã được sử dụng trước đó!", delete_after=5)
             return
 
-        if not self.is_valid_word(word):
+        if not await self.is_valid_word(word):
             await message.add_reaction("❌")
             await message.reply(f"Từ **{word}** không có trong từ điển", delete_after=5)
             return

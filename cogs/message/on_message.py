@@ -80,15 +80,15 @@ class OnMessage(commands.Cog):
         
         for target_text in target_texts:
             if fuzz.ratio(input_text.lower(), target_text.lower()) >= 70:
-                # print("1")
+                # print("fuzz")
                 return True
 
         pattern = re.compile(
-            r'\b(?:chinh|ching|chInh|chIng|chink|chin|cking|ckink|ck3nk|<@!604949724788817920>)|ckinh\s+(?:bel|beo|béo|beI|bai veo|bái vẻo|bai|vẻo)\b', 
+            r'\b(?:chinh|ching|chInh|chIng|chink|chin|cking|ckink|ck3nk|<@!604949724788817920>|ckinh)\s+(?:bel|beo|béo|beI|bai veo|bái vẻo|bai|vẻo)\b', 
             re.IGNORECASE
         )
         # if pattern.search(input_text):
-        #     print("2")
+        #     print("regex")
 
         return bool(pattern.search(input_text))
 
@@ -122,7 +122,7 @@ class OnMessage(commands.Cog):
                     extracted_text = await self.ocr_space(attachment.url)
                     if extracted_text:
                         if self.is_variant_of_chinh_bel(extracted_text.lower()):
-                            await message.channel.send("Co m beo ay")
+                            await message.channel.send("Co m bel ay")
                     else:
                         print("Không thể trích xuất văn bản từ hình ảnh.")
                     break
@@ -145,7 +145,7 @@ class OnMessage(commands.Cog):
         # if self.is_variant_of_chinh_bel(message.content.lower()) and message.author.id != 604949724788817920:
         #     await message.channel.send('Co m bel ay')
 
-        if self.is_variant_of_chinh_bel(message.content.lower()) and message.author.id != 604949724788817920:
+        if self.is_variant_of_chinh_bel(message.content.lower()) and message.author.id != config.USER_ID:
             await message.channel.send('Co m bel ay')
 
         if message.content.lower().startswith("o o") or re.search(r'\bo o\b', message.content.lower()):
