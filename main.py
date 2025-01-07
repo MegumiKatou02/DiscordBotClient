@@ -77,6 +77,7 @@ async def load_cogs():
         "cogs.extension.send_dev",
 
         "cogs.game.roll",
+        "cogs.game.word_association",
 
         "cogs.help.help_list",
 
@@ -123,4 +124,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN) # **/ignore
+clients.run(config.TOKEN_TEST_BOT) # **/ignore
