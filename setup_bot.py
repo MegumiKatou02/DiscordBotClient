@@ -1,4 +1,4 @@
-from Util.json_handle import JsonHandler
+from utils.json_handle import JsonHandler
 
 data = JsonHandler("template/bot.json", "load")
 

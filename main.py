@@ -13,7 +13,7 @@ from discord.ext import commands
 import psutil
 import config
 import setup_bot
-from Util.json_handle import JsonHandler
+from utils.json_handle import JsonHandler
 
 CLIENT_ID = setup_bot.CLIENT_ID
 
