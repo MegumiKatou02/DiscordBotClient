@@ -37,12 +37,14 @@ class Weather(commands.Cog):
         embed = discord.Embed(
             title=f"Thông tin thời tiết tại {city}, {country}",
             description=f"{weather_description.capitalize()}",
-            color=discord.Color.blue()
+            color=discord.Color.red() if temperature >= 30 else discord.Color.orange() if temperature > 20 else discord.Color.blue()
         )
+        embed.set_thumbnail(url=f"http://openweathermap.org/img/wn/{weather['icon']}@2x.png")
         embed.add_field(name="Nhiệt độ", value=f"{temperature}°C", inline=False)
         embed.add_field(name="Độ ẩm", value=f"{humidity}%", inline=False)
         embed.add_field(name="Áp suất", value=f"{pressure} hPa", inline=False)
         embed.add_field(name="Tốc độ gió", value=f"{wind_speed} m/s", inline=False)
+
 
         await interaction.response.send_message(embed=embed)
 
