@@ -12,10 +12,7 @@ import discord
 from discord.ext import commands
 import psutil
 import config
-import setup_bot
 from utils.json_handle import JsonHandler
-
-CLIENT_ID = setup_bot.CLIENT_ID
 
 intents = discord.Intents.default()  
 intents.message_content = True 

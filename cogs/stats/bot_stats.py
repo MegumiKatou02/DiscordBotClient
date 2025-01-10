@@ -5,12 +5,13 @@ import discord
 from discord.ext import commands
 
 import config
-import setup_bot
+from utils.json_handle import JsonHandler
 
 class BotStats(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.start_time = time.time()
+        self.data = JsonHandler("template/bot.json", "load")
 
     @app_commands.command(name="bot_stats", description="Thông tin về bot")
     async def info(self, interaction: discord.Interaction):
@@ -29,7 +30,7 @@ class BotStats(commands.Cog):
         bot_owner = await interaction.guild.fetch_member(bot_owner_id)
         bot_owner_name = bot_owner.name if bot_owner else "Không tìm thấy"
 
-        version_bot = setup_bot.VERSION
+        version_bot = self.data["version"]
 
         embed = discord.Embed(title=f"Thông tin bot: {bot_name}", color=0xFFFFFF)
         embed.set_thumbnail(url=bot_avatar)
