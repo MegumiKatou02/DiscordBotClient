@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime
 import time
 from discord import app_commands
 import discord
@@ -24,7 +24,10 @@ class BotStats(commands.Cog):
         channel_count = sum(len(guild.text_channels) + len(guild.voice_channels) for guild in bot.guilds)
 
         uptime_seconds = time.time() - self.start_time
-        bot_uptime = str(timedelta(seconds=uptime_seconds))
+        uptime_datetime: datetime = datetime.fromtimestamp(time.time() - uptime_seconds)
+        formatted_uptime = f"<t:{int(uptime_datetime.timestamp())}>"
+        discord_timestamp_relative = f"<t:{int(self.start_time)}:R>"
+        combined_uptime = f"{formatted_uptime} ({discord_timestamp_relative})"
 
         bot_owner_id = config.USER_ID
         bot_owner = await interaction.guild.fetch_member(bot_owner_id)
@@ -38,7 +41,7 @@ class BotStats(commands.Cog):
         embed.add_field(name="Số lượng server", value=guild_count, inline=False)
         embed.add_field(name="Số lượng thành viên", value=member_count, inline=False)
         embed.add_field(name="Số lượng kênh", value=channel_count, inline=False)
-        embed.add_field(name="Thời gian hoạt động", value=str(bot_uptime), inline=False)
+        embed.add_field(name="Thời gian hoạt động", value=combined_uptime, inline=False)
         embed.add_field(name="Chủ sở hữu bot", value=bot_owner_name, inline=False)
 
         await interaction.response.send_message(embed=embed)
