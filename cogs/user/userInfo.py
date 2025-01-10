@@ -1,6 +1,17 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
+import datetime
+from cogs.user.avatar import Avatar
+
+class AvatarButton(discord.ui.View):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user: discord.Member = user
+
+    @discord.ui.button(label="Xem Avatar", style=discord.ButtonStyle.primary)
+    async def view_avatar(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await Avatar.avatar_and_avt(interaction, self.user, ephemeral=True)
 
 class UserInfoCog(commands.Cog):
     def __init__(self, bot):
@@ -12,26 +23,31 @@ class UserInfoCog(commands.Cog):
         user = user or interaction.user
 
         nickname = user.nick if user.nick else user.name
-
         nickname = nickname.replace("_", "\\_")
         name = user.name.replace("_", "\\_")
 
+        user_joined = int(user.joined_at.timestamp())
+        user_created = int(user.created_at.timestamp())
+
         user_info = (
-            f"**Name:** {name}\n"
-            f"**Nickname:** {nickname}\n"
-            f"**ID:** {user.id}\n\n"
-            f"**Joined server:** \n`{user.joined_at.strftime('%d/%m/%Y %H:%M:%S')}`\n\n"
-            f"**Joined Discord:** \n`{user.created_at.strftime('%d/%m/%Y %H:%M:%S')}`"
+            f"**User Info**\n"
+            f"ID: {user.id}\n"
+            f"Tên người dùng: {name}\n"
+            f"Nickname: {nickname}\n\n"
+            f"**Ngày tham gia server**\n<t:{user_joined}> (<t:{user_joined}:R>)\n\n"
+            f"**Ngày tham gia Discord**\n<t:{user_created}> (<t:{user_created}:R>)\n\n"
         )
 
         embed = discord.Embed(
-            title="Thông tin người dùng",
             description=user_info,
-            color=discord.Color(0xFFFFFF)
+            color=discord.Color(0xFFFFFF),
+            timestamp=datetime.datetime.now()
         )
+        embed.set_author(name=f"@{user}", icon_url=user.display_avatar.url)
         embed.set_thumbnail(url=user.display_avatar.url)
 
-        await interaction.response.send_message(embed=embed)
+        view = AvatarButton(user)
+        await interaction.response.send_message(embed=embed, view=view)
 
 async def setup(bot):
     await bot.add_cog(UserInfoCog(bot))

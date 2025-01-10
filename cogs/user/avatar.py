@@ -6,9 +6,10 @@ class Avatar(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def avatar_and_avt(self, interaction: discord.Interaction, member: discord.Member = None):
-        if not member:
-            member = interaction.user  
+    @staticmethod
+    async def avatar_and_avt(interaction: discord.Interaction, member: discord.Member = None, ephemeral: bool = False):
+        if member is None:
+            member = interaction.user
         
         avatar_url = member.display_avatar.url 
 
@@ -19,7 +20,7 @@ class Avatar(commands.Cog):
         )
         embed.set_image(url=avatar_url)
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=ephemeral)
 
     #avatar
     @app_commands.command(name="avatar", description="Hiển thị avatar của một thành viên")
