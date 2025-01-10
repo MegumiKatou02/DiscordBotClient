@@ -18,8 +18,7 @@ class Server(commands.Cog):
         else:
             embed.add_field(name="Icon Server", value='Không có icon', inline=False)
 
-        guild_created_at = datetime.datetime.now()
-        unix_timestamp = int(guild_created_at.timestamp())
+        unix_timestamp = int(guild.created_at.timestamp())
         discord_timestamp = f"<t:{unix_timestamp}>"
 
         embed.add_field(name="Tên Server", value=guild.name, inline=False)
