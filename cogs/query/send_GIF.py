@@ -3,11 +3,15 @@ import aiohttp
 import discord
 from discord.ext import commands
 from discord import app_commands
-
+from enum import Enum
 import config
 
 GIPHY_API_KEY = config.GIPHY_API_KEY
 GIPHY_URL = "https://api.giphy.com/v1/gifs/search"
+
+class Action(Enum):
+    KISS = 'kiss',
+    HUG = 'hug'
 
 class SendGIF(commands.Cog):
     def __init__(self, bot):
@@ -62,11 +66,31 @@ class SendGIF(commands.Cog):
 
     @app_commands.command(name="hug", description="Lệnh ôm ai đó và gửi GIF")
     async def hug_command(self, interaction: discord.Interaction, user: discord.Member):
-        await self.fetch_gif("hug", interaction, user)
+        if user == interaction.user:
+            responses = [
+                f"Hugging yourself... 🤗 Somebody, come give you a hug!",
+                f"Giving yourself a big, warm hug! Don't be sad~ 💖",
+                f"Hugging yourself... Do you need a hug from someone special? <(\")",
+                f"Wrapping yourself up in a cozy blanket for a self-hug~ ☁️💞",
+                f"Snuggling a pillow tightly! Everything's gonna be okay~ 💕"
+            ]
+            await interaction.response.send_message(random.choice(responses))
+        else:
+            await self.fetch_gif(Action.HUG.value, interaction, user)
 
     @app_commands.command(name="kiss", description="Lệnh kiss ai đó và gửi GIF")
     async def kiss(self, interaction: discord.Interaction, user: discord.Member):
-        await self.fetch_gif("kiss", interaction, user)
+        if user == interaction.user:
+            responses = [
+            f"Kisses themselves... 😘 Loving yourself is amazing!",
+            f"Gives themselves a cheek kiss~ UwU 💕",
+            f"Blows a kiss to themselves! 💋✨",
+            f"Smooches themselves! Someone should come and claim this kiss~ 💞",
+            f"Rewards themselves with a cute kiss! You're awesome! <(\")"
+        ]
+            await interaction.response.send_message(random.choice(responses))
+        else:
+            await self.fetch_gif(Action.KISS.value, interaction, user)
 
 async def setup(bot):
     await bot.add_cog(SendGIF(bot))

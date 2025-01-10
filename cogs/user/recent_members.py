@@ -24,8 +24,9 @@ class RecentMembers(commands.Cog):
 
         member_info = []
         for member in recent_members:
-            join_date = member.joined_at.strftime('%d-%m-%Y %H:%M:%S')
-            member_info.append(f"**{member.name}**  -  Tham gia vào: {join_date}")
+            join_date = f"<t:{int(member.joined_at.timestamp())}>"
+            join_long = f"<t:{int(member.joined_at.timestamp())}:R>"
+            member_info.append(f"**{member.name}**  - {join_date} ({join_long})")
 
         embed = discord.Embed(
             title="Các thành viên tham gia gần đây",
