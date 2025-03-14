@@ -61,13 +61,10 @@ async def load_cogs():
         "cogs.administration.delete_mess",
         "cogs.administration.event",
         "cogs.administration.lock",
-        "cogs.administration.notification",
         "cogs.administration.voice",
 
         "cogs.emoji.emoji_image",
         "cogs.emoji.steal_emoji",
-
-        "cogs.event.event_server",
 
         "cogs.extension.extension",
         "cogs.extension.notification",
@@ -80,7 +77,6 @@ async def load_cogs():
 
         "cogs.message.on_message",
 
-        "cogs.query.anime_image",
         "cogs.query.send_GIF",
         "cogs.query.weather",
 
