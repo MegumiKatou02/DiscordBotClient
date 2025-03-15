@@ -13,35 +13,48 @@ class NoiTu(commands.Cog):
         self.last_player = None
         self.used_words = set()
         self.word_cache = {}  
+        self.scores = {}
 
         # with open("cogs/game/vietnamese_words.json", "r", encoding="utf-8") as f:
         #     self.valid_words = set(item["text"].lower() for item in json.load(f))
 
+    # is_valid, is_stuck
     async def is_valid_word(self, word):
         if word in self.word_cache:
-            return self.word_cache[word]
+            return self.word_cache[word], False
 
-        url = f"https://vietnamese-dictionary-api.vercel.app/api/search?word={word}"
+        url = f"https://vietnamese-dictionary-api.vercel.app/api/search?word={word}&next=true"
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
-                        self.word_cache[word] = data.get("valid", False) 
+            
+                        is_valid = data.get("valid", False)
 
-                        return data.get("valid", False)
+                        is_stuck: bool = not data.get("next")
+
+                        self.word_cache[word] = is_valid 
+
+                        return is_valid, is_stuck
                     else:
                         print(f"Lỗi khi gọi API: {response.status}")
-                        return False
+                        return False, False
         except Exception as e:
             print(f"Lỗi khi kết nối đến API: {e}")
-            return False
+            return False, False
         # return word.lower() in self.valid_words
 
     @app_commands.command(name="noitu", description="Quản lý trò chơi nối từ")
-    @app_commands.describe(action="Hành động (start/end)", channel="Kênh để bắt đầu trò chơi")
-    async def noitu(self, interaction: discord.Interaction, action: str, channel: discord.TextChannel = None):
-        if action == "start":
+    @app_commands.describe(action="Hành động", channel="Kênh để bắt đầu trò chơi")
+    @app_commands.choices(
+        action=[
+            app_commands.Choice(name="Bắt đầu", value="start"),
+            app_commands.Choice(name="Kết thúc", value="end"),
+        ]
+    )
+    async def noitu(self, interaction: discord.Interaction, action: app_commands.Choice[str], channel: discord.TextChannel = None):
+        if action.value == "start":
             if self.game_started:
                 await interaction.response.send_message("Trò chơi đã bắt đầu rồi!", ephemeral=True)
                 return
@@ -57,9 +70,9 @@ class NoiTu(commands.Cog):
             self.used_words = set()
             self.used_words.add(self.last_word)
 
-            await interaction.response.send_message(f"Trò chơi nối từ đã bắt đầu trong kênh {channel.mention}! Hãy bắt đầu với từ đầu tiên hợp lệ")
+            await interaction.response.send_message(f"Trò chơi đã được nâng cấp từ điển kể từ ngày 14/03/2025. Nếu bạn nghĩ có một số từ bị thiếu hoặc sai sót xin đừng chửi Ching :sob:, chửi tôi đây này (toi chinh la Nerine).\n\n Trò chơi nối từ đã bắt đầu trong kênh {channel.mention}! Hãy bắt đầu với từ đầu tiên hợp lệ")
 
-        elif action == "end":
+        elif action.value == "end":
             if not self.game_started:
                 await interaction.response.send_message("Trò chơi chưa bắt đầu!", ephemeral=True)
                 return
@@ -69,6 +82,7 @@ class NoiTu(commands.Cog):
             self.channel = None
             self.last_player = None
             self.used_words = set()
+            self.scores = {}
 
             await interaction.response.send_message("Kết thúc trò chơi!")
 
@@ -88,11 +102,15 @@ class NoiTu(commands.Cog):
             await message.add_reaction("❌")
             await message.reply(f"Từ **{word}** đã được sử dụng trước đó!", delete_after=5)
             return
+        
+        is_valid, is_stuck = await self.is_valid_word(word)
 
-        if not await self.is_valid_word(word):
+        if not is_valid:
             await message.add_reaction("❌")
             await message.reply(f"Từ **{word}** không có trong từ điển", delete_after=5)
             return
+
+        ### Còn lại đều là valid :v
 
         new_words = word.split()
         last_words = self.last_word.split()
@@ -104,6 +122,16 @@ class NoiTu(commands.Cog):
         self.last_word = word
         self.last_player = message.author
         self.used_words.add(word)
+
+        self.scores[message.author.global_name] = self.scores.get(message.author.global_name, 0) + 1
+
+        if is_stuck:
+            score_text = "\n".join(f"{user}: {score} điểm" for user, score in self.scores.items())
+            await message.channel.send(f"Trò chơi kết thúc vì không có từ nào hợp lệ nữa\n\n**Bảng xếp hạng:**\n{score_text}")
+
+            self.scores = {}
+            self.game_started = False
+            return
 
         await message.add_reaction("✅")
         await message.reply(f"Từ **{word}** hợp lệ. Tiếp tục", delete_after=5)
