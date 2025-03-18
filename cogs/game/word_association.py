@@ -15,9 +15,6 @@ class NoiTu(commands.Cog):
         self.word_cache = {}  
         self.scores = {}
 
-        # with open("cogs/game/vietnamese_words.json", "r", encoding="utf-8") as f:
-        #     self.valid_words = set(item["text"].lower() for item in json.load(f))
-
     # is_valid, is_stuck
     async def is_valid_word(self, word):
         if word in self.word_cache:
@@ -32,7 +29,14 @@ class NoiTu(commands.Cog):
             
                         is_valid = data.get("valid", False)
 
-                        is_stuck: bool = not data.get("next")
+                        nextSuggest = data.get("next")
+
+                        if nextSuggest and len(nextSuggest) == 1:
+                            nextSplit = nextSuggest[0].split()
+                            if len(nextSplit) > 1 and nextSplit[0] == nextSplit[1]:
+                                return is_valid, True
+
+                        is_stuck: bool = not nextSuggest
 
                         self.word_cache[word] = is_valid 
 
@@ -70,7 +74,7 @@ class NoiTu(commands.Cog):
             self.used_words = set()
             self.used_words.add(self.last_word)
 
-            await interaction.response.send_message(f"Trò chơi đã được nâng cấp từ điển kể từ ngày 14/03/2025. Nếu bạn nghĩ có một số từ bị thiếu hoặc sai sót xin đừng chửi Ching :sob:, chửi tôi đây này (toi chinh la Nerine).\n\n Trò chơi nối từ đã bắt đầu trong kênh {channel.mention}! Hãy bắt đầu với từ đầu tiên hợp lệ")
+            await interaction.response.send_message(f"Trò chơi đã được nâng cấp từ điển kể từ ngày 14/03/2025. Nếu bạn nghĩ có một số từ bị thiếu hoặc sai sót xin đừng chửi Ching :sob:, chửi tôi đây này (toi chinh la Nerine).\n\nTrò chơi nối từ đã bắt đầu trong kênh {channel.mention}! Hãy bắt đầu với từ đầu tiên hợp lệ")
 
         elif action.value == "end":
             if not self.game_started:
@@ -124,8 +128,12 @@ class NoiTu(commands.Cog):
         self.used_words.add(word)
 
         self.scores[message.author.global_name] = self.scores.get(message.author.global_name, 0) + 1
+        await message.add_reaction("✅")
 
         if is_stuck:
+            self.scores[message.author.global_name] = self.scores.get(message.author.global_name, 0) - 2
+            await message.channel.send(f"{message.author.global_name} bị trừ 2đ vì nối từ đến giới hạn :penguin:")
+
             score_text = "\n".join(f"{user}: {score} điểm" for user, score in self.scores.items())
             await message.channel.send(f"Trò chơi kết thúc vì không có từ nào hợp lệ nữa\n\n**Bảng xếp hạng:**\n{score_text}")
 
@@ -133,7 +141,6 @@ class NoiTu(commands.Cog):
             self.game_started = False
             return
 
-        await message.add_reaction("✅")
         await message.reply(f"Từ **{word}** hợp lệ. Tiếp tục", delete_after=5)
 
 async def setup(bot):
