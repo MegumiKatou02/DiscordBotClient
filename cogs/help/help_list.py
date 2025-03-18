@@ -12,16 +12,13 @@ class HelpList(commands.Cog):
                 {"name": "say", "desc": "Để bot nói hộ bạn"},
                 {"name": "roll", "desc": "Random số ngẫu nhiên"},
                 {"name": "choose", "desc": "Giúp bạn chọn lựa ngẫu nhiên"},
-                {"name": "anime", "desc": "Tìm kiếm thông tin anime"}
             ],
             "🛠️ Tiện Ích": [
                 {"name": "avatar", "desc": "Xem avatar người dùng"},
                 {"name": "server", "desc": "Xem thông tin server"},
                 {"name": "find_member", "desc": "Tìm kiếm thành viên"},
-                {"name": "reminder", "desc": "Đặt nhắc nhở"},
                 {"name": "weather", "desc": "Xem thông tin thời tiết"},
                 {"name": "math", "desc": "Giải toán đơn giản"},
-                {"name": "remove_bg", "desc": "Xóa background ảnh"}
             ],
             "📊 Thống Kê": [
                 {"name": "server_stats", "desc": "Thống kê về server"},
@@ -29,15 +26,10 @@ class HelpList(commands.Cog):
                 {"name": "userinfo", "desc": "Thông tin người dùng"}
             ],
             "⚡ Admin Tools": [
-                {"name": "recent_members", "desc": "Xem thành viên mới (Admin)"},
-                {"name": "events_list", "desc": "Quản lý sự kiện (Admin)"},
-                {"name": "set_voice", "desc": "Cài đặt voice (Admin)"},
-                {"name": "get_voice", "desc": "Xem cài đặt voice (Admin)"},
                 {"name": "steal_emoji", "desc": "Thêm emoji vào server (Admin)"},
                 {"name": "lock", "desc": "Khóa channel (Admin)"}
             ],
             "🔧 Quản Lý": [
-                {"name": "channel_rename", "desc": "Đổi tên channel"},
                 {"name": "delete_messenger", "desc": "Xóa tin nhắn"},
                 {"name": "emoji_image", "desc": "Chuyển emoji thành ảnh"}
             ]

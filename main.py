@@ -59,15 +59,12 @@ async def on_ready():
 async def load_cogs():
     cogs = [
         "cogs.administration.delete_mess",
-        "cogs.administration.event",
         "cogs.administration.lock",
-        "cogs.administration.voice",
 
         "cogs.emoji.emoji_image",
         "cogs.emoji.steal_emoji",
 
         "cogs.extension.extension",
-        "cogs.extension.notification",
         "cogs.extension.send_dev",
 
         "cogs.game.roll",
@@ -86,7 +83,6 @@ async def load_cogs():
         "cogs.stats.server_stats",
         
         "cogs.user.avatar",
-        "cogs.user.recent_members",
         "cogs.user.userInfo"
     ]
     
@@ -117,4 +113,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN) # **/ignore
+clients.run(config.TOKEN_TEST_BOT) # **/ignore
