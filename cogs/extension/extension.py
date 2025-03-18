@@ -64,28 +64,6 @@ class Extension(commands.Cog):
 
         await interaction.response.send_message(f'**{topic}**: {chosen_member.mention}')
 
-    #reminder
-    @app_commands.command(description="Đặt nhắc nhở")
-    async def reminder(self, interaction: discord.Interaction, time: str, *, message: str):
-        try:
-            reminder_time = datetime.strptime(time, "%H:%M")
-            
-            now = datetime.now()
-            wait_time = (reminder_time - now).total_seconds()
-
-            if wait_time < 0:
-                reminder_time += timedelta(days=1)
-                wait_time = (reminder_time - now).total_seconds()
-
-            await interaction.response.send_message(f"Nhắc nhở của bạn đã được đặt vào lúc {reminder_time.strftime('%H:%M')}! Tôi sẽ nhắc bạn: **{message}**", ephemeral=True)
-
-            await asyncio.sleep(wait_time)
-
-            await interaction.user.send(f"**Nhắc nhở bạn đã đặt**: {message}")
-        
-        except ValueError:
-            await interaction.response.send_message("Vui lòng nhập thời gian đúng định dạng HH:MM (vd: 02:24)", ephemeral=True)
-
     #math
     @app_commands.command(name="math", description="Tính toán biểu thức toán học")
     async def math_command(self, interaction: discord.Interaction, expression: str):
