@@ -2,8 +2,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import random
-import asyncio
-from datetime import datetime, timedelta
 import re
 import sympy as sp
 

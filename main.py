@@ -113,4 +113,4 @@ async def log_memory_usage(interaction: discord.Interaction):
     mem_info = process.memory_info()
     await interaction.response.send_message(f"RSS: {mem_info.rss / 1024 / 1024:.2f} MB")
 
-clients.run(config.TOKEN_TEST_BOT) # **/ignore
+clients.run(config.TOKEN) # **/ignore
